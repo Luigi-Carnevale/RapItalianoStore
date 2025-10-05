@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 RapItalianoStore. Tutti i diritti riservati.</p>
+            <p>&copy; 2025 RapItalianoStore. Tutti i diritti riservati.</p>
         </div>
     </div>
 </footer>
