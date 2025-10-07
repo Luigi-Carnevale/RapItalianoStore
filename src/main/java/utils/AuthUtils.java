@@ -3,6 +3,7 @@ package utils;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import it.unisa.rapitalianostore.model.Utente;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -19,7 +20,28 @@ public class AuthUtils {
 
         Utente u = SessionManager.getUtente(request);
         if (u == null) {
-            // JSP protetta sotto WEB-INF, quindi redirect a servlet di login
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
+        }
+        return true;
+    }
+
+    // ✅ Verifica che il token della richiesta corrisponda a quello della sessione
+    public static boolean verificaToken(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) return false;
+
+        String tokenSessione = (String) session.getAttribute("sessionToken");
+        String tokenRichiesta = request.getParameter("sessionToken");
+
+        if (tokenSessione == null || tokenRichiesta == null) return false;
+        return tokenSessione.equals(tokenRichiesta);
+    }
+
+    // ✅ Versione per servlet che vogliono bloccare accessi con token errato
+    public static boolean requireValidToken(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        if (!verificaToken(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
         }

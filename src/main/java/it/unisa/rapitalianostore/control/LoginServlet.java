@@ -19,7 +19,7 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Se già loggato → redirect diretto a home o admin
+        // Se già loggato → redirect diretto
         Utente utente = SessionManager.getUtente(request);
         if (utente != null) {
             if (AuthUtils.isAdmin(utente)) {
@@ -30,7 +30,6 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // Altrimenti mostra la pagina di login
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
         dispatcher.forward(request, response);
     }
@@ -50,10 +49,10 @@ public class LoginServlet extends HttpServlet {
         System.out.println("[Login] utenteFound=" + (utente != null));
 
         boolean ok = (utente != null) &&
-                     AuthUtils.verificaPassword(password, utente.getPassword());
+                AuthUtils.verificaPassword(password, utente.getPassword());
 
         if (ok) {
-            // ✅ Crea la sessione tramite SessionManager
+            // ✅ Crea la sessione e il token di sicurezza
             SessionManager.creaSessione(request, utente);
 
             System.out.println("[Login] OK ruolo=" + utente.getRuolo());

@@ -4,31 +4,21 @@
 <header class="header">
     <nav class="navbar">
         <div class="nav-container">
-            <!-- Logo -->
             <div class="nav-logo">
                 <h1><i class="fas fa-music"></i> RapItalianoStore</h1>
             </div>
 
-            <!-- Hamburger menu (mobile) -->
             <div class="hamburger" id="hamburger">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
             </div>
 
-            <!-- Menu -->
             <ul class="nav-menu" id="nav-menu">
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/home" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/catalogo" class="nav-link">Catalogo</a>
-                </li>
-                <li class="nav-item">
-                    <a href="${pageContext.request.contextPath}/artisti" class="nav-link">Artisti</a>
-                </li>
+                <li class="nav-item"><a href="${pageContext.request.contextPath}/home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="${pageContext.request.contextPath}/catalogo" class="nav-link">Catalogo</a></li>
+                <li class="nav-item"><a href="${pageContext.request.contextPath}/artisti" class="nav-link">Artisti</a></li>
 
-                <!-- Carrello -->
                 <li class="nav-item">
                     <a href="${pageContext.request.contextPath}/carrello" class="nav-link cart-link">
                         <i class="fas fa-shopping-cart"></i>
@@ -39,40 +29,31 @@
                     </a>
                 </li>
 
-                <!-- Ordini: solo se loggato -->
                 <c:if test="${sessionScope.utente != null}">
                     <li class="nav-item">
                         <a href="${pageContext.request.contextPath}/ordini" class="nav-link">I miei ordini</a>
                     </li>
+                    <li class="nav-item nav-user">
+                        <span class="nav-link">
+                            <i class="fas fa-user-circle"></i>
+                            Benvenuto, <strong>${sessionScope.utente.email}</strong>
+                        </span>
+                    </li>
                 </c:if>
 
-                <!-- Dashboard Admin -->
                 <c:if test="${sessionScope.utente != null && sessionScope.utente.ruolo == 'admin'}">
                     <li class="nav-item">
                         <a href="${pageContext.request.contextPath}/admin" class="nav-link">Dashboard Admin</a>
                     </li>
                 </c:if>
 
-                <!-- Login / Registrati / Logout -->
                 <c:choose>
                     <c:when test="${sessionScope.utente == null}">
-                        <li class="nav-item">
-                            <a href="${pageContext.request.contextPath}/login" class="nav-link">
-                                <i class="fas fa-user"></i> Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="${pageContext.request.contextPath}/registrazione" class="nav-link">
-                                <i class="fas fa-user-plus"></i> Registrati
-                            </a>
-                        </li>
+                        <li class="nav-item"><a href="${pageContext.request.contextPath}/login" class="nav-link"><i class="fas fa-user"></i> Login</a></li>
+                        <li class="nav-item"><a href="${pageContext.request.contextPath}/registrazione" class="nav-link"><i class="fas fa-user-plus"></i> Registrati</a></li>
                     </c:when>
                     <c:otherwise>
-                        <li class="nav-item">
-                            <a href="${pageContext.request.contextPath}/logout" class="nav-link">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
-                        </li>
+                        <li class="nav-item"><a href="${pageContext.request.contextPath}/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </c:otherwise>
                 </c:choose>
             </ul>
