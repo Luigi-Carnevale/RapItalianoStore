@@ -20,7 +20,8 @@ public class AuthUtils {
 
         Utente u = SessionManager.getUtente(request);
         if (u == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            // ✅ Aggiunto parametro "expired=inactivity" per segnalare sessione scaduta per inattività
+            response.sendRedirect(request.getContextPath() + "/login?expired=inactivity");
             return false;
         }
         return true;
@@ -42,7 +43,7 @@ public class AuthUtils {
     public static boolean requireValidToken(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         if (!verificaToken(request)) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/login?expired=true");
             return false;
         }
         return true;

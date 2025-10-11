@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>RapItalianoStore - Login</title>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -18,6 +18,22 @@
     <div class="container">
         <div class="login-container">
             <h2>Accedi</h2>
+
+            <!-- ✅ Messaggi sessione scaduta -->
+            <c:choose>
+                <c:when test="${param.expired == 'inactivity'}">
+                    <div class="session-expired-box">
+                        <i class="fas fa-hourglass-half"></i>
+                        Sei stato inattivo troppo a lungo. La sessione è scaduta, effettua nuovamente il login per riprendere a fare le tue cose.
+                    </div>
+                </c:when>
+                <c:when test="${param.expired == 'true'}">
+                    <div class="session-expired-box">
+                        <i class="fas fa-clock"></i>
+                        La tua sessione è scaduta. Effettua di nuovo il login.
+                    </div>
+                </c:when>
+            </c:choose>
 
             <!-- Messaggio di successo da registrazione -->
             <c:if test="${not empty msgRegistrazione}">
@@ -53,6 +69,20 @@
 </main>
 
 <jsp:include page="footer.jsp" />
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const box = document.querySelector(".session-expired-box");
+    if (box) {
+        setTimeout(() => {
+            box.style.transition = "opacity 0.8s ease";
+            box.style.opacity = "0";
+            setTimeout(() => box.remove(), 800); // rimuove il box dal DOM dopo il fade
+        }, 5500); // attende 5,5 secondi prima di iniziare a svanire
+    }
+});
+</script>
+
 
 </body>
 </html>
