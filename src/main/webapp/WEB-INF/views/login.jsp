@@ -19,7 +19,7 @@
         <div class="login-container">
             <h2>Accedi</h2>
 
-            <!-- ✅ Messaggi sessione scaduta -->
+            <!-- ✅ Messaggi sessione scaduta o token errato -->
             <c:choose>
                 <c:when test="${param.expired == 'inactivity'}">
                     <div class="session-expired-box">
@@ -45,6 +45,7 @@
                 <p style="color:red; text-align:center;">${error}</p>
             </c:if>
 
+            <!-- Form di login -->
             <form class="login-form" action="${pageContext.request.contextPath}/login" method="post">
                 <div class="form-group">
                     <label for="email">Email</label>
@@ -70,6 +71,7 @@
 
 <jsp:include page="footer.jsp" />
 
+<!-- Script per far svanire il messaggio -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const box = document.querySelector(".session-expired-box");
@@ -77,12 +79,11 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             box.style.transition = "opacity 0.8s ease";
             box.style.opacity = "0";
-            setTimeout(() => box.remove(), 800); // rimuove il box dal DOM dopo il fade
+            setTimeout(() => box.remove(), 800);
         }, 5500); // attende 5,5 secondi prima di iniziare a svanire
     }
 });
 </script>
-
 
 </body>
 </html>

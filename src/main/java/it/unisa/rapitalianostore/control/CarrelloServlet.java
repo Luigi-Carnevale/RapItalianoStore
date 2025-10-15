@@ -47,11 +47,13 @@ public class CarrelloServlet extends HttpServlet {
         ProdottoDAO dao = new ProdottoDAO();
 
         if ("add".equals(action)) {
-            int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
-            Prodotto prodotto = dao.findById(idProdotto);
-            if (prodotto != null) {
-                carrello.aggiungiProdotto(prodotto);
-            }
+            try {
+                int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
+                Prodotto prodotto = dao.findById(idProdotto);
+                if (prodotto != null) {
+                    carrello.aggiungiProdotto(prodotto);
+                }
+            } catch (NumberFormatException ignore) {}
 
             session.setAttribute("totaleCarrelloHeader", carrello.getTotale());
 
@@ -73,31 +75,30 @@ public class CarrelloServlet extends HttpServlet {
         }
 
         if ("remove".equals(action)) {
-            int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
-            carrello.rimuoviProdotto(idProdotto);
+            try {
+                int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
+                carrello.rimuoviProdotto(idProdotto);
+            } catch (NumberFormatException ignore) {}
+
             session.setAttribute("totaleCarrelloHeader", carrello.getTotale());
             response.sendRedirect(request.getContextPath() + "/carrello");
             return;
         }
 
         if ("update".equals(action)) {
-            int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
-            int quantita = Integer.parseInt(request.getParameter("quantita"));
-            carrello.aggiornaQuantita(idProdotto, quantita);
+            try {
+                int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
+                int quantita = Integer.parseInt(request.getParameter("quantita"));
+                carrello.aggiornaQuantita(idProdotto, quantita);
+            } catch (NumberFormatException ignore) {}
+
             session.setAttribute("totaleCarrelloHeader", carrello.getTotale());
 
-            // 🔹 Risposta AJAX con JSON
+            // Risposta AJAX: ritorno almeno il totale carrello aggiornato
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                double totaleRiga = carrello.getItems().stream()
-                        .filter(i -> i.getProdotto().getId() == idProdotto)
-                        .mapToDouble(i -> i.getQuantita() * i.getProdotto().getPrezzo())
-                        .findFirst()
-                        .orElse(0);
-
                 response.setContentType("application/json");
                 response.getWriter().write(
                     "{\"success\":true," +
-                    "\"totaleRiga\":" + totaleRiga + "," +
                     "\"totaleCarrello\":" + carrello.getTotale() + "}"
                 );
                 return;

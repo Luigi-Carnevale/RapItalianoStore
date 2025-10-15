@@ -27,7 +27,7 @@ public class CheckoutServlet extends HttpServlet {
         // 🔒 Controllo login
         if (!AuthUtils.requireLogin(request, response)) return;
 
-        // Aggiungo il token della sessione alla JSP
+        // Passo il token sessione alla JSP (se lo usi nel form hidden)
         request.setAttribute("sessionToken", SessionManager.getSessionToken(request));
 
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/checkout.jsp");
@@ -81,7 +81,7 @@ public class CheckoutServlet extends HttpServlet {
                 break;
 
             case "bonifico":
-                // Nessun campo extra
+                // nessun campo extra
                 break;
 
             default:
@@ -97,8 +97,10 @@ public class CheckoutServlet extends HttpServlet {
         boolean ok = ordineDAO.salvaOrdine(utente, carrello, indirizzo, metodoPagamento);
 
         if (ok) {
+            // svuota carrello in sessione
             session.removeAttribute("carrello");
             session.setAttribute("totaleCarrelloHeader", 0.0);
+
             request.setAttribute("msgSuccesso", "Ordine completato con successo!");
             request.getRequestDispatcher("/WEB-INF/views/confermaOrdine.jsp").forward(request, response);
         } else {

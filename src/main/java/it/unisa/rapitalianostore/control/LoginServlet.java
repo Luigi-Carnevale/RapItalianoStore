@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
                 AuthUtils.verificaPassword(password, utente.getPassword());
 
         if (ok) {
-            // ✅ Crea la sessione e il token di sicurezza
+            // Crea la sessione e il token di sicurezza
             SessionManager.creaSessione(request, utente);
 
             System.out.println("[Login] OK ruolo=" + utente.getRuolo());
@@ -70,3 +70,4 @@ public class LoginServlet extends HttpServlet {
         }
     }
 }
+
