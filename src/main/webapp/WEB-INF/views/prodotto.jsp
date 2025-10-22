@@ -93,7 +93,7 @@
                             <option value="2">⭐⭐</option>
                             <option value="1">⭐</option>
                         </select>
-
+						<br>
                         <label for="commento">Commento:</label>
                         <textarea name="commento" id="commento" rows="3" required></textarea>
 
