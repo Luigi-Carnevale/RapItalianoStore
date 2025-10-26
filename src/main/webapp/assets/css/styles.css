@@ -1,225 +1,1636 @@
 /* =====================
+   Reset e Stili Base
+   ===================== */
+* {
+    margin: 0;                 /* azzera margini di default */
+    padding: 0;                /* azzera padding di default */
+    box-sizing: border-box;    /* include padding e bordi nel calcolo di width/height */
+}
+
+body {
+    font-family: 'Roboto', sans-serif; /* font principale */
+    line-height: 1.6;                  /* altezza linee più leggibile */
+    color: #fff;                       /* testo bianco */
+    background-color: #000;            /* sfondo nero */
+    overflow-x: hidden;                /* evita scroll orizzontale */
+}
+
+.container {
+    max-width: 1200px;   /* larghezza massima */
+    margin: 0 auto;      /* centrato orizzontalmente */
+    padding: 0 20px;     /* padding laterale */
+}
+
+/* =====================
    Header e Navigazione
    ===================== */
 .header {
-    background: linear-gradient(135deg, #000 0%, #1a0000 100%);
-    box-shadow: 0 2px 10px rgba(255, 0, 0, 0.3);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+    background: linear-gradient(135deg, #000 0%, #1a0000 100%); /* sfondo sfumato nero/rosso scuro */
+    box-shadow: 0 2px 10px rgba(255, 0, 0, 0.3);                /* ombra rossa sotto header */
+    position: fixed;   /* fisso in alto */
+    top: 0;            /* attaccato al bordo superiore */
+    width: 100%;       /* prende tutta la larghezza */
+    z-index: 1000;     /* sopra agli altri elementi */
 }
 
 .navbar {
-    padding: 0.4rem 0;
+    padding: 0.4rem 0;   /* ridotto (prima 1rem) → header più sottile */
 }
 
 .nav-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 0 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    max-width: 1300px;                 /* limite larghezza */
+    margin: 0 auto;                    /* centrato */
+    padding: 0 15px;                   /* leggermente meno padding laterale */
+    display: flex;                     /* usa flexbox */
+    justify-content: space-between;    /* logo a sinistra, menu a destra */
+    align-items: center;               /* allinea verticalmente al centro */
 }
 
 .nav-logo h1 {
-    color: #ff0000;
-    font-size: 1.4rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
+    color: #ff0000;             /* rosso */
+    font-size: 1.4rem;          /* più piccolo (prima 1.8rem) */
+    font-weight: 900;           /* molto grassetto */
+    text-transform: uppercase;  /* tutto maiuscolo */
+    letter-spacing: 1px;        /* meno spazio tra lettere */
+    white-space: nowrap;        /* evita che vada a capo */
 }
 
 .nav-logo i {
-    margin-right: 8px;
-    color: #ff0000;
+    margin-right: 8px; /* spazio tra icona e testo */
+    color: #ff0000;    /* icona rossa */
 }
 
+/* La lista della nav resta su una riga e centra verticalmente gli elementi */
 .nav-menu {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: nowrap;
+    align-items: center;   /* centra verticalmente i <li> */
+    gap: 1rem;             /* meno spazio tra voci (prima 1.5rem) */
+    flex-wrap: nowrap;     /* evita a capo indesiderati su desktop */
 }
 
+/* Ogni voce del menu è un contenitore flessibile */
 .nav-menu > li {
     display: flex;
-    align-items: center;
-    margin: 0;
+    align-items: center;  /* centra link e icone verticalmente */
+    margin: 0;            /* elimina eventuali margini ereditati */
 }
 
 .nav-link {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    position: relative;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    white-space: nowrap;
+    color: #fff;                      /* testo bianco */
+    text-decoration: none;            /* niente sottolineatura */
+    font-weight: 500;                 /* medio grassetto */
+    transition: all 0.3s ease;        /* animazione morbida hover */
+    position: relative;               /* per stato attivo */
+    padding: 0.3rem 0.6rem;           /* più piccolo (prima 0.5rem 1rem) */
+    border-radius: 4px;               /* angoli arrotondati */
+    font-size: 0.85rem;               /* testo più compatto */
+    white-space: nowrap;              /* ogni link resta su una riga */
 }
 
 .nav-link:hover,
 .nav-link.active {
-    color: #ff0000;
-    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff0000;                        /* diventa rosso */
+    background-color: rgba(255, 0, 0, 0.1); /* sfondo trasparente rosso */
 }
 
 .nav-link i {
-    margin-right: 4px;
+    margin-right: 4px; /* spazio tra icona e testo */
 }
 
-/* Hamburger Menu (mobile) */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
+/* Carrello nella navbar */
+
+.cart-link {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* spazio tra icona, testo e numerini */
+    white-space: nowrap; /* impedisce di andare a capo */
 }
 
-.bar {
-    width: 25px;
-    height: 3px;
-    background-color: #fff;
-    margin: 3px 0;
-    transition: 0.3s;
+.cart-label {
+    margin-right: 3px;
 }
 
-@media (max-width: 768px) {
-    .hamburger { display: flex; }
-    
-    .nav-menu {
-        position: fixed;
-        left: -100%;
-        top: 70px;
-        flex-direction: column;
-        background-color: #000;
-        width: 100%;
-        text-align: center;
-        transition: 0.3s;
-        padding: 2rem 0;
-    }
+.cart-count {
+    background-color: #ff0000;
+    color: #000;
+    border-radius: 50%;
+    padding: 3px 6px;       /* più compatto (prima 4px 8px) */
+    font-size: 0.8rem;      /* più piccolo (prima 0.9rem) */
+    font-weight: bold;
+    margin-left: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;        /* ridotto (prima 22px) */
+    height: 18px;
+}
 
-    .nav-menu.active { left: 0; }
-
-    .nav-menu li { margin: 1rem 0; }
+.cart-total-header {
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 0.8rem;   /* più piccolo (prima 0.9rem) */
 }
 
 /* =====================
-   Footer
+   Hamburger Menu (mobile)
    ===================== */
-.footer {
-    background: linear-gradient(135deg, #000 0%, #1a0000 100%);
-    padding: 3rem 0 1rem;
-    margin-top: 4rem;
-    border-top: 1px solid #333;
+.hamburger {
+    display: none;             /* nascosto su desktop */
+    flex-direction: column;    /* barre una sotto l'altra */
+    cursor: pointer;           /* cursore a mano */
 }
 
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+.bar {
+    width: 25px;               /* lunghezza barra */
+    height: 3px;               /* spessore */
+    background-color: #fff;    /* bianco */
+    margin: 3px 0;             /* spazio tra barre */
+    transition: 0.3s;          /* animazione */
 }
 
-.footer-section h3,
-.footer-section h4 {
-    color: #ff0000;
-    margin-bottom: 1rem;
+/* =====================
+   Contenuto Principale
+   ===================== */
+.main-content {
+    margin-top: 80px;                /* spazio per header fisso */
+    min-height: calc(100vh - 80px);  /* altezza minima meno header */
 }
 
-.footer-section ul {
-    list-style: none;
+.page {
+    display: none;        /* nascoste di default */
+    padding: 2rem 0;      /* padding verticale */
 }
 
-.footer-section ul li {
-    margin-bottom: 0.5rem;
-}
-
-.footer-section a {
-    color: #ccc;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-section a:hover {
-    color: #ff0000;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid #333;
-    color: #666;
+.page.active {
+    display: block;       /* mostra pagina attiva */
 }
 
 /* =====================
    Homepage (Hero Section)
    ===================== */
 .hero-section {
-    background: linear-gradient(135deg, #000 0%, #1a0000 50%, #000 100%);
-    padding: 4rem 0;
-    display: flex;
-    align-items: center;
-    min-height: 70vh;
+    background: linear-gradient(135deg, #000 0%, #1a0000 50%, #000 100%); /* sfondo */
+    padding: 4rem 0;            /* spaziatura verticale */
+    display: flex;              /* flexbox */
+    align-items: center;        /* centra contenuto */
+    min-height: 70vh;           /* altezza minima */
 }
 
 .hero-content {
-    flex: 1;
-    padding: 0 2rem;
+    flex: 1;              /* occupa metà spazio */
+    padding: 0 2rem;      /* padding laterale */
 }
 
 .hero-title {
-    font-size: 3.5rem;
-    font-weight: 900;
-    color: #ff0000;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 3px;
+    font-size: 3.5rem;     /* molto grande */
+    font-weight: 900;      /* molto grassetto */
+    color: #ff0000;        /* rosso */
+    margin-bottom: 1rem;   /* spazio sotto */
+    text-transform: uppercase; /* maiuscolo */
+    letter-spacing: 3px;   /* spazio lettere */
 }
 
 .hero-subtitle {
-    font-size: 1.3rem;
-    color: #ccc;
-    margin-bottom: 2rem;
-    line-height: 1.8;
+    font-size: 1.3rem;   /* medio */
+    color: #ccc;         /* grigio chiaro */
+    margin-bottom: 2rem; /* spazio sotto */
+    line-height: 1.8;    /* leggibile */
 }
 
 .hero-buttons {
+    display: flex;   /* bottoni affiancati */
+    gap: 1rem;       /* spazio tra bottoni */
+    flex-wrap: wrap; /* vanno a capo se serve */
+}
+
+.hero-image {
+    flex: 1;          /* metà spazio */
+    text-align: center; /* centrato */
+    font-size: 15rem; /* enorme icona */
+    color: #ff0000;   /* rossa */
+    opacity: 0.3;     /* trasparente */
+}
+
+/* =====================
+   Bottoni
+   ===================== */
+.btn {
+    display: inline-block;         /* inline ma blocco */
+    padding: 12px 30px;            /* spaziatura */
+    text-decoration: none;         /* senza sottolineatura */
+    border-radius: 5px;            /* angoli arrotondati */
+    font-weight: 600;              /* bold medio */
+    text-transform: uppercase;     /* maiuscolo */
+    letter-spacing: 1px;           /* spazio lettere */
+    transition: all 0.3s ease;     /* animazione hover */
+    border: none;                  /* senza bordo */
+    cursor: pointer;               /* mano */
+    font-size: 1rem;               /* testo medio */
+}
+
+.btn-primary {
+    background-color: #ff0000; /* rosso */
+    color: #000;               /* nero */
+}
+
+.btn-primary:hover {
+    background-color: #cc0000; /* rosso scuro */
+    transform: translateY(-2px); /* solleva bottone */
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); /* ombra */
+}
+
+.btn-secondary {
+    background-color: transparent; /* trasparente */
+    color: #ff0000;                /* rosso */
+    border: 2px solid #ff0000;     /* bordo rosso */
+}
+
+.btn-secondary:hover {
+    background-color: #ff0000; /* riempie di rosso */
+    color: #000;               /* testo nero */
+    transform: translateY(-2px); /* solleva */
+}
+
+/* =====================
+   Features Section
+   ===================== */
+.features-section {
+    padding: 4rem 0;     /* spaziatura */
+    background-color: #111; /* sfondo grigio scuro */
+}
+
+.features-section h3 {
+    text-align: center;       /* centrato */
+    font-size: 2.5rem;        /* grande */
+    color: #ff0000;           /* rosso */
+    margin-bottom: 3rem;      /* spazio sotto */
+    text-transform: uppercase; /* maiuscolo */
+    letter-spacing: 2px;      /* spazio lettere */
+}
+
+.features-grid {
+    display: grid;                   /* griglia */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive */
+    gap: 2rem;                       /* spazio tra elementi */
+}
+
+.feature-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo */
+    padding: 2rem;         /* interno */
+    border-radius: 10px;   /* arrotondato */
+    text-align: center;    /* centrato */
+    border: 1px solid #333; /* bordo */
+    transition: all 0.3s ease; /* animazione */
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);   /* solleva */
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); /* ombra */
+    border-color: #ff0000;         /* bordo rosso */
+}
+
+.feature-card i {
+    font-size: 3rem;   /* icona grande */
+    color: #ff0000;    /* rossa */
+    margin-bottom: 1rem; /* spazio sotto */
+}
+
+.feature-card h4 {
+    font-size: 1.5rem;  /* medio */
+    margin-bottom: 1rem; /* spazio sotto */
+    color: #fff;         /* bianco */
+}
+
+.feature-card p {
+    color: #ccc;      /* grigio */
+    line-height: 1.6; /* leggibile */
+}
+
+/* =====================
+   Catalogo
+   ===================== */
+.catalog-filters {
+    display: flex;        /* usa flexbox per disporre i filtri */
+    gap: 1rem;            /* spazio tra i filtri */
+    margin-bottom: 2rem;  /* margine inferiore per separare dal catalogo */
+    flex-wrap: wrap;      /* permette ai filtri di andare a capo su schermi piccoli */
+}
+
+.catalog-filters select {
+    padding: 10px 15px;          /* spaziatura interna */
+    background-color: #1a1a1a;   /* sfondo grigio scuro */
+    color: #fff;                 /* testo bianco */
+    border: 1px solid #333;      /* bordo grigio */
+    border-radius: 5px;          /* angoli arrotondati */
+    font-size: 1rem;             /* dimensione testo media */
+}
+
+.catalog-filters select:focus {
+    outline: none;        /* rimuove contorno blu predefinito */
+    border-color: #ff0000; /* bordo rosso al focus */
+}
+
+.catalog-grid {
+    display: grid;                   /* layout a griglia */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* colonne responsive */
+    gap: 2rem;                       /* spazio tra le card */
+}
+
+.album-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo sfumato */
+    border-radius: 10px;   /* angoli arrotondati */
+    overflow: hidden;      /* nasconde contenuto che esce dal box */
+    border: 1px solid #333; /* bordo grigio */
+    transition: all 0.3s ease; /* animazione hover */
+    cursor: pointer;       /* cursore a mano */
+}
+
+.album-card:hover {
+    transform: translateY(-5px); /* solleva la card */
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3); /* ombra rossa */
+    border-color: #ff0000;     /* bordo rosso */
+}
+
+/* =====================
+   Ricerca e Filtri
+   ===================== */
+
+.catalog-filters {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0 2rem 0;   /* margine sopra/sotto */
+    flex-wrap: wrap;           /* va a capo su mobile */
+    align-items: center;
+}
+
+.catalog-filters input[type="text"],
+.catalog-filters select {
+    padding: 10px 15px;
+    background-color: #1a1a1a;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.catalog-filters input[type="text"]:focus,
+.catalog-filters select:focus {
+    outline: none;
+    border-color: #ff0000; /* rosso evidenza */
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+}
+
+.catalog-filters button {
+    padding: 10px 20px;
+    background-color: #ff0000;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.catalog-filters button:hover {
+    background-color: #cc0000;
+    transform: translateY(-2px);
+}
+
+#searchResults {
+    margin-top: 1rem;
+    background: #111;
+    padding: 1rem;
+    border-radius: 8px;
+    color: #fff;
+}
+#searchResults h3 { 
+	color: #ff0000; margin-bottom: 0.5rem; 
+}
+#searchResults ul { 
+	list-style: none; padding: 0; 
+}
+#searchResults li { 
+	padding: 5px 0; border-bottom: 1px solid #333; 
+}
+#searchResults li:last-child { 
+	border-bottom: none; 
+}
+
+/* Contenitore immagine album */
+.album-image {
+    width: 100%;         /* occupa tutta la larghezza */
+    height: 350px;       /* altezza fissa per uniformare le copertine */
+    overflow: hidden;    /* taglia le parti fuori */
+    display: flex;       /* flexbox per centrare l'immagine */
+    align-items: center; /* centro verticale */
+    justify-content: center; /* centro orizzontale */
+    background: #111;    /* sfondo nero in caso manchi immagine */
+}
+
+/* Immagine album */
+.album-image img {
+    width: 100%;              /* riempie in larghezza */
+    height: 100%;             /* riempie in altezza */
+    object-fit: cover;        /* riempie il box ritagliando senza deformare */
+    object-position: center;  /* mantiene immagine centrata */
+    display: block;           /* elimina spazi bianchi extra */
+}
+
+.album-info {
+    padding: 1.5rem; /* spaziatura interna */
+}
+
+.album-title {
+    font-size: 1.3rem;  /* dimensione titolo */
+    font-weight: 700;   /* grassetto */
+    color: #fff;        /* testo bianco */
+    margin-bottom: 0.5rem; /* margine inferiore */
+}
+
+.album-artist {
+    color: #ff0000;    /* rosso */
+    font-weight: 500;  /* medio grassetto */
+    margin-bottom: 1rem; /* margine inferiore */
+}
+
+.album-price {
+    font-size: 1.5rem; /* grandezza prezzo */
+    font-weight: 900;  /* molto grassetto */
+    color: #ff0000;    /* rosso */
+    margin-bottom: 1rem; /* margine inferiore */
+}
+
+.add-to-cart {
+    width: 100%;          /* bottone largo quanto la card */
+    padding: 10px;        /* spaziatura interna */
+    background-color: #ff0000; /* rosso */
+    color: #000;          /* testo nero */
+    border: none;         /* senza bordo */
+    border-radius: 5px;   /* angoli arrotondati */
+    font-weight: 600;     /* bold medio */
+    cursor: pointer;      /* mano */
+    transition: all 0.3s ease; /* animazione */
+}
+
+.add-to-cart:hover {
+    background-color: #cc0000; /* rosso più scuro */
+    transform: translateY(-2px); /* solleva leggermente */
+}
+
+/* =====================
+   Artisti
+   ===================== */
+.artists-grid {
+    display: grid;                       /* layout a griglia */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* colonne responsive */
+    gap: 2rem;                           /* spazio tra card */
+}
+
+.artist-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo sfumato */
+    border-radius: 10px;   /* angoli arrotondati */
+    padding: 2rem;         /* spaziatura interna */
+    text-align: center;    /* contenuto centrato */
+    border: 1px solid #333; /* bordo grigio */
+    transition: all 0.3s ease; /* animazione */
+}
+
+.artist-card:hover {
+    transform: translateY(-5px); /* solleva card */
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2); /* ombra */
+    border-color: #ff0000;     /* bordo rosso */
+}
+
+.artist-image {
+    width: 150px;              /* larghezza immagine artista */
+    height: 150px;             /* altezza immagine artista */
+    border-radius: 50%;        /* forma circolare */
+    background: linear-gradient(45deg, #333, #666); /* sfondo grigio sfumato */
+    margin: 0 auto 1rem;       /* centra e margine sotto */
+    display: flex;             /* flexbox */
+    align-items: center;       /* centra verticalmente */
+    justify-content: center;   /* centra orizzontalmente */
+    font-size: 3rem;           /* icona grande se manca immagine */
+    color: #ff0000;            /* rosso */
+}
+
+.artist-image img {
+    width: 100%;          /* immagine larga quanto il contenitore */
+    height: 100%;         /* alta quanto il contenitore */
+    object-fit: cover;    /* riempie il cerchio ritagliandosi */
+    border-radius: 50%;   /* mantiene forma circolare */
+    display: block;       /* elimina spazi extra */
+}
+
+.artist-name {
+    font-size: 1.5rem;    /* dimensione nome artista */
+    font-weight: 700;     /* grassetto */
+    color: #fff;          /* bianco */
+    margin-bottom: 0.5rem; /* margine inferiore */
+}
+
+.artist-genre {
+    color: #ff0000;       /* rosso */
+    font-weight: 500;     /* medio */
+    margin-bottom: 1rem;  /* margine inferiore */
+}
+
+.artist-bio {
+    color: #ccc;          /* grigio chiaro */
+    line-height: 1.6;     /* più leggibile */
+    font-size: 0.9rem;    /* testo più piccolo */
+}
+
+/* =====================
+   Carrello
+   ===================== */
+.cart-content {
+    display: grid;                        /* usa griglia per layout */
+    grid-template-columns: 2fr 1fr;       /* due colonne: prodotti a sinistra, riepilogo a destra */
+    gap: 2rem;                            /* spazio tra colonne */
+}
+
+.cart-items {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo scuro sfumato */
+    border-radius: 10px;   /* angoli arrotondati */
+    padding: 2rem;         /* spaziatura interna */
+    border: 1px solid #333; /* bordo grigio */
+}
+
+.cart-item {
+    display: flex;        /* ogni prodotto del carrello è in flexbox */
+    align-items: center;  /* centra verticalmente */
+    gap: 1rem;            /* spazio tra immagine e info */
+    padding: 1rem 0;      /* spaziatura verticale */
+    border-bottom: 1px solid #333; /* linea divisoria */
+}
+
+.cart-item:last-child {
+    border-bottom: none;  /* rimuove linea all’ultimo prodotto */
+}
+
+.cart-item-image {
+    width: 80px;          /* larghezza immagine prodotto */
+    height: 80px;         /* altezza immagine prodotto */
+    background: linear-gradient(45deg, #333, #666); /* sfondo grigio sfumato */
+    border-radius: 5px;   /* angoli arrotondati */
+    display: flex;        /* flexbox */
+    align-items: center;  /* centra verticalmente */
+    justify-content: center; /* centra orizzontalmente */
+    color: #ff0000;       /* colore icona fallback */
+    font-size: 1.5rem;    /* grandezza icona fallback */
+}
+
+.cart-item-info {
+    flex: 1;              /* occupa tutto lo spazio rimanente */
+}
+
+.cart-item-title {
+    font-weight: 600;     /* grassetto medio */
+    color: #fff;          /* bianco */
+    margin-bottom: 0.25rem; /* margine inferiore */
+}
+
+.cart-item-artist {
+    color: #ff0000;       /* rosso */
+    font-size: 0.9rem;    /* più piccolo */
+}
+
+.cart-item-price {
+    font-weight: 700;     /* grassetto */
+    color: #ff0000;       /* rosso */
+    font-size: 1.2rem;    /* dimensione prezzo */
+}
+
+.cart-item-controls {
+    display: flex;        /* layout flessibile */
+    align-items: center;  /* centrato verticalmente */
+    gap: 0.5rem;          /* spazio tra bottoni */
+}
+
+.quantity-btn {
+    background-color: #ff0000;
+    color: #000;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 8px 16px;   /* più spazio, centrato */
+    text-align: center;
+    display: inline-block;
+}
+
+.quantity-btn:hover {
+    background-color: #cc0000;
+}
+
+.remove-item {
+    background-color: #666;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px 16px;   /* uguale a quantity-btn */
+    text-align: center;
+    display: inline-block;
+}
+
+.remove-item:hover {
+    background-color: #444;
+}
+
+.quantity-input {
+    width: 80px;
+    padding: 6px;
+    text-align: center;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.cart-summary {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo scuro sfumato */
+    border-radius: 10px;   /* arrotondato */
+    padding: 2rem;         /* interno */
+    border: 1px solid #333; /* bordo grigio */
+    height: fit-content;   /* altezza si adatta al contenuto */
+}
+
+.cart-total h3 {
+    font-size: 1.5rem;     /* titolo grande */
+    color: #ff0000;        /* rosso */
+    margin-bottom: 1rem;   /* margine inferiore */
+}
+
+.empty-cart {
+    text-align: center;    /* testo centrato */
+    color: #666;           /* grigio chiaro */
+    font-size: 1.2rem;     /* medio */
+    padding: 2rem;         /* spaziatura interna */
+}
+
+/* Loader carrello */
+.cart-loader {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.85);
+    color: #ff0000;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transition: opacity 0.3s ease;
+}
+
+/* ===== Admin Dashboard ===== */
+.admin-panel {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.admin-panel a {
+    flex: 1;
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.admin-panel a.btn-primary {
+    background-color: #ff0000;
+    color: #000;
+}
+
+.admin-panel a.btn-primary:hover {
+    background-color: #cc0000;
+    transform: translateY(-2px);
+}
+
+.admin-panel a.btn-secondary {
+    background-color: transparent;
+    color: #ff0000;
+    border: 2px solid #ff0000;
+}
+
+.admin-panel a.btn-secondary:hover {
+    background-color: #ff0000;
+    color: #000;
+    transform: translateY(-2px);
+}
+
+/* ===== Tabelle Admin ===== */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    color: #fff;
+}
+
+.admin-table th, .admin-table td {
+    border: 1px solid #333;
+    padding: 10px;
+    text-align: center;
+}
+
+.admin-table th {
+    background-color: #1a1a1a;
+    color: #ff0000;
+}
+
+.admin-table tr:nth-child(even) {
+    background-color: #111;
+}
+
+.admin-table img {
+    border-radius: 5px;
+}
+
+/* ===== Form Admin ===== */
+.admin-form {
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid #333;
+}
+
+.admin-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+    width: 100%;
+    padding: 10px;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+    outline: none;
+    border-color: #ff0000;
+}
+
+/* Bottoni admin */
+.btn-danger {
+    background-color: #ff0000;
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn-danger:hover {
+    background-color: #cc0000;
+}
+
+/* ============================= */
+/* ADMIN SECTION STYLES          */
+/* ============================= */
+
+/* Dashboard Admin */
+.admin-dashboard {
+    max-width: 800px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.admin-dashboard h2 {
+    color: #ff0000;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.admin-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.admin-buttons a {
+    display: block;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #1a1a1a, #2a0000);
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 10px;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.admin-buttons a:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255,0,0,0.3);
+    border-color: #ff0000;
+}
+
+/* ===== Ordini ===== */
+.order-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.2);
+    border-color: #ff0000;
+}
+
+.order-header {
+    margin-bottom: 1rem;
+}
+
+.order-header h3 {
+    color: #ff0000;
+    margin-bottom: 0.3rem;
+}
+
+.order-header p {
+    color: #ccc;
+    margin: 0.2rem 0;
+}
+
+.order-total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #ff0000;
+}
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid #333;
+}
+
+.order-item:first-child {
+    border-top: none;
+}
+
+.order-item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #111;
+    flex-shrink: 0;
+}
+
+.order-item-info {
+    flex: 1;
+}
+
+.order-item-title {
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.order-item-subtotal {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* =====================
+   Login
+   ===================== */
+.login-container {
+    max-width: 400px;      /* limite larghezza form */
+    margin: 0 auto;        /* centrato */
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo scuro sfumato */
+    padding: 3rem;         /* spaziatura interna */
+    border-radius: 10px;   /* arrotondato */
+    border: 1px solid #333; /* bordo grigio */
+}
+
+.login-form {
+    margin-bottom: 2rem;   /* spazio sotto il form */
+}
+
+.form-group {
+    margin-bottom: 1.5rem; /* spazio sotto ogni gruppo */
+}
+
+.form-group label {
+    display: block;        /* label su riga intera */
+    margin-bottom: 0.5rem; /* spazio sotto */
+    color: #fff;           /* testo bianco */
+    font-weight: 500;      /* medio grassetto */
+}
+
+.form-group input {
+    width: 100%;           /* input largo quanto il contenitore */
+    padding: 12px 15px;    /* spaziatura interna */
+    background-color: #000; /* sfondo nero */
+    color: #fff;           /* testo bianco */
+    border: 1px solid #333; /* bordo grigio */
+    border-radius: 5px;    /* angoli arrotondati */
+    font-size: 1rem;       /* medio */
+}
+
+.form-group input:focus {
+    outline: none;         /* rimuove contorno blu */
+    border-color: #ff0000; /* bordo rosso al focus */
+}
+
+.login-options {
+    text-align: center;    /* centrato */
+}
+
+.login-options a {
+    color: #ff0000;        /* link rosso */
+    text-decoration: none; /* senza sottolineatura */
+}
+
+.login-options a:hover {
+    text-decoration: underline; /* sottolineato al passaggio */
+}
+
+/* =====================
+   Modal
+   ===================== */
+.modal {
+    display: none;             /* nascosta di default */
+    position: fixed;           /* posizione fissa rispetto alla finestra */
+    z-index: 2000;             /* sopra tutto il resto */
+    left: 0;                   /* parte dal bordo sinistro */
+    top: 0;                    /* parte dal bordo superiore */
+    width: 100%;               /* occupa tutta la larghezza */
+    height: 100%;              /* occupa tutta l’altezza */
+    background-color: rgba(0, 0, 0, 0.8); /* sfondo nero semi-trasparente */
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a0000 100%); /* sfondo interno */
+    margin: 5% auto;        /* centrata con margine sopra/sotto */
+    padding: 2rem;          /* spaziatura interna */
+    border-radius: 10px;    /* angoli arrotondati */
+    width: 90%;             /* larghezza 90% schermo */
+    max-width: 600px;       /* ma non oltre 600px */
+    border: 1px solid #333; /* bordo grigio */
+    position: relative;     /* per posizionare la X di chiusura */
+}
+
+.close {
+    color: #ff0000;         /* X rossa */
+    float: right;           /* spostata a destra */
+    font-size: 2rem;        /* grande */
+    font-weight: bold;      /* grassetto */
+    cursor: pointer;        /* cursore a mano */
+    position: absolute;     /* posizione assoluta nel box */
+    top: 1rem;              /* distanza dall’alto */
+    right: 1.5rem;          /* distanza da destra */
+}
+
+.close:hover {
+    color: #cc0000;         /* rosso più scuro al passaggio */
+}
+
+/* =====================
+   Footer
+   ===================== */
+.footer {
+    background: linear-gradient(135deg, #000 0%, #1a0000 100%); /* sfondo sfumato */
+    padding: 3rem 0 1rem;   /* padding sopra 3rem, sotto 1rem */
+    margin-top: 4rem;       /* distacco dal contenuto */
+    border-top: 1px solid #333; /* bordo superiore grigio */
+}
+
+.footer-content {
+    display: grid;                   /* layout a griglia */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* colonne responsive */
+    gap: 2rem;                       /* spazio tra colonne */
+    margin-bottom: 2rem;             /* margine sotto */
+}
+
+.footer-section h3,
+.footer-section h4 {
+    color: #ff0000;       /* titoli rossi */
+    margin-bottom: 1rem;  /* margine inferiore */
+}
+
+.footer-section ul {
+    list-style: none;     /* rimuove pallini lista */
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem; /* spazio tra voci */
+}
+
+.footer-section a {
+    color: #ccc;             /* link grigi */
+    text-decoration: none;   /* senza sottolineatura */
+    transition: color 0.3s ease; /* animazione al passaggio */
+}
+
+.footer-section a:hover {
+    color: #ff0000; /* diventa rosso al passaggio */
+}
+
+.footer-bottom {
+    text-align: center;   /* testo centrato */
+    padding-top: 2rem;    /* margine superiore */
+    border-top: 1px solid #333; /* linea divisoria */
+    color: #666;          /* grigio chiaro */
+}
+
+/* =========================
+   PAGINA PRODOTTO
+   ========================= */
+.product-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.product-image {
+    flex: 1 1 40%;
+    max-width: 400px;
+}
+
+.product-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+    flex: 1 1 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.product-info h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.album-artist {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.album-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #e63946;
+    margin-bottom: 1rem;
+}
+
+.album-description {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    color: #444;
+}
+
+/* Bottone aggiungi al carrello */
+.product-info .btn-primary {
+    align-self: flex-start;
+    padding: 10px 20px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.product-info .btn-primary:hover {
+    background: #e63946;
+}
+
+/* =========================
+   RECENSIONI
+   ========================= */
+.reviews-section {
+    margin-top: 3rem;
+}
+
+.review-card {
+    border: 1px solid red;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: rgb(0, 0, 0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.review-header strong {
+    color: rgb(255, 0, 0);
+}
+
+.review-stars {
+    color: #f1c40f;
+    margin: 0 10px;
+}
+
+.review-date {
+    font-size: 0.85rem;
+    color: rgb(255, 255, 255);
+}
+
+.review-comment {
+    margin-top: 0.5rem;
+    color: rgb(255,255,255);
+}
+
+/* Form recensione */
+.review-form {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid red;
+    border-radius: 8px;
+    background: black;
+}
+
+.review-form h4 {
+    margin-bottom: 1rem;
+}
+
+.review-form textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.review-form .btn-secondary {
+    background: #444;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.review-form .btn-secondary:hover {
+    background: #e63946;
+}
+
+
+/* =====================
+   Responsive Design
+   ===================== */
+@media (max-width: 768px) {          /* regole per schermi fino a 768px (tablet e piccoli laptop) */
+    .hamburger { display: flex; }    /* mostra hamburger menu */
+    
+    .nav-menu {
+        position: fixed;             /* menu diventa fisso */
+        left: -100%;                 /* nascosto fuori schermo a sinistra */
+        top: 70px;                   /* sotto l’header */
+        flex-direction: column;      /* link in colonna */
+        background-color: #000;      /* sfondo nero */
+        width: 100%;                 /* larghezza piena */
+        text-align: center;          /* testo centrato */
+        transition: 0.3s;            /* animazione apertura */
+        padding: 2rem 0;             /* padding interno */
+    }
+
+    .nav-menu.active { left: 0; }    /* quando è attivo, appare da sinistra */
+
+    .nav-menu li { margin: 1rem 0; } /* spazio tra link */
+
+    .hero-section { 
+        flex-direction: column;      /* contenuto in colonna */
+        text-align: center;          /* testo centrato */
+        padding: 2rem 0;             /* meno spazio verticale */
+    }
+
+    .hero-title { font-size: 2.5rem; } /* titolo più piccolo */
+
+    .hero-image { 
+        font-size: 8rem;            /* immagine icona più piccola */
+        margin-top: 2rem;           /* margine sopra */
+    }
+
+    .hero-buttons { justify-content: center; } /* bottoni centrati */
+
+    .features-grid { grid-template-columns: 1fr; } /* griglia feature in una colonna */
+
+    .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); } /* catalogo più stretto */
+
+    .artists-grid { grid-template-columns: 1fr; } /* artisti in una sola colonna */
+
+    .cart-content { grid-template-columns: 1fr; } /* carrello in una colonna */
+
+    .catalog-filters { flex-direction: column; } /* filtri uno sotto l’altro */
+
+    .modal-content { 
+        margin: 10% auto;            /* centrata più in basso */
+        width: 95%;                  /* più stretta */
+        padding: 1.5rem;             /* meno padding */
+    }
+}
+
+@media (max-width: 480px) {          /* regole per schermi molto piccoli (smartphone) */
+    .container { padding: 0 15px; }  /* meno spazio laterale */
+
+    .hero-title { font-size: 2rem; } /* titolo più piccolo */
+    .hero-subtitle { font-size: 1.1rem; } /* sottotitolo ridotto */
+
+    .btn { 
+        padding: 10px 20px;          /* bottoni più compatti */
+        font-size: 0.9rem;           /* testo più piccolo */
+    }
+
+    .album-card, .artist-card { margin: 0 10px; } /* margini ridotti */
+    .login-container { padding: 2rem 1.5rem; }   /* meno padding login */
+}
+
+/* =====================
+   Animazioni
+   ===================== */
+@keyframes fadeIn {
+    from { 
+        opacity: 0;                    /* parte trasparente */
+        transform: translateY(20px);   /* leggermente spostata in basso */
+    }
+    to { 
+        opacity: 1;                    /* diventa visibile */
+        transform: translateY(0);      /* posizione originale */
+    }
+}
+
+.page.active { 
+    animation: fadeIn 0.5s ease-in-out; /* effetto fade-in quando una pagina diventa attiva */
+}
+
+/* Messaggio di successo "Prodotto aggiunto al carrello" */
+.msg-success {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+.msg-success.hidden {
+    opacity: 0;
+}
+
+
+/* =====================
+   Scrollbar personalizzata
+   ===================== */
+::-webkit-scrollbar { width: 8px; }                /* larghezza scrollbar */
+
+::-webkit-scrollbar-track { background: #000; }    /* binario scrollbar nero */
+
+::-webkit-scrollbar-thumb { 
+    background: #ff0000;   /* cursore rosso */
+    border-radius: 4px;    /* arrotondato */
+}
+
+::-webkit-scrollbar-thumb:hover { 
+    background: #cc0000;   /* rosso scuro al passaggio */
+}
+
+/* Messaggio successo AJAX (Prodotto agiunto al carrello)*/
+.msg-success {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background-color: #ff0000;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 2000;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+/* =======================
+   Checkout - Pagamenti
+   ======================= */
+.payment-fields {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #000; /* nero */
+    color: #fff;      /* testo chiaro */
+}
+
+.payment-fields .form-group {
+    margin-bottom: 0.8rem;
+}
+
+.form-inline {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-inline .form-group {
+    flex: 1;
+}
+
+.info-box {
+    padding: 1rem;
+    background-color: #111; /* nero leggermente più chiaro */
+    border-left: 4px solid #e63946; /* rosso coerente */
+    font-size: 0.95rem;
+    border-radius: 4px;
+    color: #fff;
+}
+
+/* =======================
+   Carrello
+   ======================= */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    color: #fff; /* testo bianco */
+}
+
+.cart-table th, 
+.cart-table td {
+    border-bottom: 1px solid #444;
+    padding: 0.8rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.cart-table th {
+    background-color: #000; /* nero */
+    color: #fff;
+    font-weight: bold;
+}
+
+.cart-product {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: left;
+}
+
+.cart-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #666; /* bordo grigio chiaro */
+}
+
+.cart-summary {
+    margin-top: 1.5rem;
+    text-align: right;
+    color: #fff;
+}
+
+/* =======================
+   Ordini utente
+   ======================= */
+.order-box {
+    border: 1px solid #444;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    background: #000; /* nero */
+    color: #fff;
+}
+
+.order-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.8rem;
+    color: #fff;
+}
+
+.order-details th, 
+.order-details td {
+    border-bottom: 1px solid #444;
+    padding: 0.6rem;
+    text-align: center;
+}
+
+.order-details th {
+    background: #000; /* nero */
+    color: #fff;
+    font-weight: bold;
+}
+
+/* =======================
+   Gestione Ordini - Admin
+   ======================= */
+.order-box {
+    border: 1px solid #444;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    background: #000;      /* tema scuro */
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.order-box h3 {
+    margin-top: 0;
+    color: #e63946;        /* rosso accento */
+}
+
+.order-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.8rem;
+    color: #fff;
+}
+
+.order-details th,
+.order-details td {
+    border-bottom: 1px solid #444;
+    padding: 0.6rem;
+    text-align: center;
+}
+
+.order-details th {
+    background: #111;
+    color: #fff;
+    font-weight: bold;
+}
+
+.cart-product {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: left;
+}
+
+.cart-thumb {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #666;
+}
+
+/* =======================
+   Filtri admin
+   ======================= */
+.filter-form {
+    background: #000;
+    padding: 1rem;
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    color: #fff;
+}
+
+.filter-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #e63946; /* rosso accento */
+}
+
+.filter-form input {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #666;
+    border-radius: 4px;
+    background: #111;
+    color: #fff;
+}
+
+.filter-form .form-inline {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-.hero-image {
+.filter-form .form-group {
     flex: 1;
+    min-width: 200px;
+}
+
+.filter-form .btn-primary {
+    background: #e63946;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.filter-form .btn-primary:hover {
+    background: #b52a35;
+}
+
+.filter-form .form-inline {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end; /* ✅ allinea verticalmente al fondo */
+}
+
+.filter-form .form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-form .form-group:last-child {
+    flex: 0; /* ✅ bottone largo solo quanto serve */
+}
+
+.filter-form .form-inline {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end; /* ✅ allinea verticalmente al fondo */
+}
+
+.filter-form .form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-form .form-group:last-child {
+    flex: 0; /* ✅ bottone largo solo quanto serve */
+}
+
+/* =======================
+   Pagina Conferma Ordine
+   ======================= */
+.success-banner {
+    max-width: 800px;          /* ✅ larghezza contenuta */
+    margin: 2rem auto;         /* ✅ centrato con spazio sopra/sotto */
+    padding: 1rem 1.5rem;
+    background-color: #2ecc71; /* verde successo */
+    color: #fff;
+    border-radius: 6px;
     text-align: center;
-    font-size: 15rem;
-    color: #ff0000;
-    opacity: 0.3;
+    font-size: 1.1rem;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
-/* Responsive per Homepage */
-@media (max-width: 768px) {
-    .hero-section { 
-        flex-direction: column;
-        text-align: center;
-        padding: 2rem 0;
-    }
-
-    .hero-title { font-size: 2.5rem; }
-
-    .hero-image { 
-        font-size: 8rem;
-        margin-top: 2rem;
-    }
-
-    .hero-buttons { justify-content: center; }
+.success-banner::before {
+    content: "✔ ";             /* icona di conferma */
+    font-size: 1.2rem;
 }
 
-@media (max-width: 480px) {
-    .hero-title { font-size: 2rem; }
-    .hero-subtitle { font-size: 1.1rem; }
+.confirm-page p {
+    max-width: 800px;
+    margin: 0 auto 1.5rem auto;
+    text-align: center;
+    color: #fff;
+    font-size: 1rem;
 }
+
+.confirm-page .btn {
+    margin: 0.5rem;
+}
+

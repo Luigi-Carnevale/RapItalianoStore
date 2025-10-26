@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RapItalianoStore - Il tuo negozio di Rap Italiano</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><i class="fas fa-music"></i> RapItalianoStore</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#home" class="nav-link active" data-page="home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#catalog" class="nav-link" data-page="catalog">Catalogo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#artists" class="nav-link" data-page="artists">Artisti</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#cart" class="nav-link" data-page="cart">
+                            <i class="fas fa-shopping-cart"></i> Carrello 
+                            <span class="cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#login" class="nav-link" data-page="login">
+                            <i class="fas fa-user"></i> Login
+                        </a>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenuto Principale -->
+    <main class="main-content">
+        <!-- Homepage -->
+        <section id="home" class="page active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2 class="hero-title">Benvenuto nel RapItalianoStore</h2>
+                    <p class="hero-subtitle">Scopri la migliore collezione di album di Rap Italiano</p>
+                    <div class="hero-buttons">
+                        <a href="#catalog" class="btn btn-primary" data-page="catalog">Esplora Catalogo</a>
+                        <a href="#artists" class="btn btn-secondary" data-page="artists">Scopri Artisti</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <i class="fas fa-headphones"></i>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <div class="container">
+                    <h3>Perché scegliere RapItalianoStore?</h3>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-shipping-fast"></i>
+                            <h4>Spedizione Veloce</h4>
+                            <p>Consegna rapida in tutta Italia</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Pagamenti Sicuri</h4>
+                            <p>Transazioni protette e sicure</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-music"></i>
+                            <h4>Qualità Premium</h4>
+                            <p>Album originali e di alta qualità</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalogo -->
+        <section id="catalog" class="page">
+            <div class="container">
+                <h2>Catalogo Album</h2>
+                <div class="catalog-filters">
+                    <select id="artist-filter">
+                        <option value="">Tutti gli artisti</option>
+                    </select>
+                    <select id="price-filter">
+                        <option value="">Tutti i prezzi</option>
+                        <option value="0-20">€0 - €20</option>
+                        <option value="20-30">€20 - €30</option>
+                        <option value="30+">€30+</option>
+                    </select>
+                </div>
+                <div class="catalog-grid" id="catalog-grid">
+                    <!-- Gli album verranno caricati dinamicamente -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Artisti -->
+        <section id="artists" class="page">
+            <div class="container">
+                <h2>Artisti</h2>
+                <div class="artists-grid" id="artists-grid">
+                    <!-- Gli artisti verranno caricati dinamicamente -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Carrello -->
+        <section id="cart" class="page">
+            <div class="container">
+                <h2>Il Tuo Carrello</h2>
+                <div class="cart-content">
+                    <div class="cart-items" id="cart-items">
+                        <p class="empty-cart">Il tuo carrello è vuoto</p>
+                    </div>
+                    <div class="cart-summary">
+                        <div class="cart-total">
+                            <h3>Totale: <span id="cart-total">€0.00</span></h3>
+                        </div>
+                        <button class="btn btn-primary" id="checkout-btn" disabled>
+                            Procedi al Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login -->
+        <section id="login" class="page">
+            <div class="container">
+                <div class="login-container">
+                    <h2>Accedi al tuo Account</h2>
+                    <form class="login-form" id="login-form">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Accedi</button>
+                    </form>
+                    <div class="login-options">
+                        <p>Non hai un account? <a href="#" id="register-link">Registrati</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>RapItalianoStore</h3>
+                    <p>Il tuo negozio di riferimento per il Rap Italiano</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Link Utili</h4>
+                    <ul>
+                        <li><a href="#catalog">Catalogo</a></li>
+                        <li><a href="#artists">Artisti</a></li>
+                        <li><a href="#cart">Carrello</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contatti</h4>
+                    <p>Email: info@rapitalianostore.it</p>
+                    <p>Telefono: +39 123 456 7890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 RapItalianoStore. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal per dettagli album -->
+    <div id="album-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body" id="modal-body">
+                <!-- Contenuto dinamico -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per checkout -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body">
+                <h2>Completa il tuo ordine</h2>
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label for="full-name">Nome Completo</label>
+                        <input type="text" id="full-name" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Indirizzo</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">Città</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">CAP</label>
+                        <input type="text" id="zip" name="zip" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Conferma Ordine</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
