@@ -23,6 +23,10 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 RapItalianoStore. Tutti i diritti riservati.</p>
+            <br>
+            <p>Sviluppato da Carnevale Luigi.</p>
         </div>
     </div>
 </footer>
+
+<script src="${pageContext.request.contextPath}/assets/js/navbar.js"></script>

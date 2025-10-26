@@ -1223,23 +1223,42 @@ body {
    Responsive Design
    ===================== */
 @media (max-width: 768px) {          /* regole per schermi fino a 768px (tablet e piccoli laptop) */
-    .hamburger { display: flex; }    /* mostra hamburger menu */
+    .hamburger { 
+    	display: flex; 	 			 /* mostra hamburger menu */
+    	position: relative; 
+    	z-index: 10001; 			 /* sopra al pannello che scorre */
+    }   
     
     .nav-menu {
         position: fixed;             /* menu diventa fisso */
-        left: -100%;                 /* nascosto fuori schermo a sinistra */
-        top: 70px;                   /* sotto l’header */
+        right: -100%;                 /* nascosto fuori schermo a sinistra */
+        top: 45px;                   /* sotto l’header */
+        height: calc (100vh - 45px);	/* occupa l'altezza della viewport sotto l'header */
+        overflow-y: auto; 			/* scroll interno quando il menù è lungo */
+        
+        /* Centratura del pannello */
+        display: flex; 
         flex-direction: column;      /* link in colonna */
+        align-item: center; 		/* centra l'orizzontale */
+        justify-content: center; 	/* centra verticale */
+        
         background-color: #000;      /* sfondo nero */
         width: 100%;                 /* larghezza piena */
         text-align: center;          /* testo centrato */
-        transition: 0.3s;            /* animazione apertura */
+        transition: right .3s ease;  /* animazione apertura */
         padding: 2rem 0;             /* padding interno */
+        z-index: 10000; 			/* sopra al contenuto della pagina */
     }
 
-    .nav-menu.active { left: 0; }    /* quando è attivo, appare da sinistra */
+body.menu-open { overflow: hidden; }	/* quando è aperta la navbar impedisce lo scorrimento della pagina da sotto */
 
-    .nav-menu li { margin: 1rem 0; } /* spazio tra link */
+
+    .nav-menu.active { right: 0; }    /* quando è attivo, appare da sinistra */
+
+    .nav-menu li { 
+    margin: 1rem 0; 	 /* spazio tra link */
+    width: auto; 		/* evita full-width del li */
+    } 
 
     .hero-section { 
         flex-direction: column;      /* contenuto in colonna */
@@ -1633,4 +1652,3 @@ body {
 .confirm-page .btn {
     margin: 0.5rem;
 }
-
