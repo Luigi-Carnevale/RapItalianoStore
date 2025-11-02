@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> <%-- serve per escape del next --%>
 
 <html lang="it">
 <head>
@@ -19,21 +20,13 @@
         <div class="login-container">
             <h2>Accedi</h2>
 
-            <!-- ✅ Messaggi sessione scaduta o token errato -->
-            <c:choose>
-                <c:when test="${param.expired == 'inactivity'}">
-                    <div class="session-expired-box">
-                        <i class="fas fa-hourglass-half"></i>
-                        Sei stato inattivo troppo a lungo. La sessione è scaduta, effettua nuovamente il login per riprendere a fare le tue cose.
-                    </div>
-                </c:when>
-                <c:when test="${param.expired == 'true'}">
-                    <div class="session-expired-box">
-                        <i class="fas fa-clock"></i>
-                        La tua sessione è scaduta. Effettua di nuovo il login.
-                    </div>
-                </c:when>
-            </c:choose>
+            <!-- mostra il banner SOLO se il filtro ha indicato sessione scaduta -->
+            <c:if test="${param.error == 'sessionExpired'}">
+                <div class="session-expired-box">
+                    <i class="fas fa-clock"></i>
+                    La tua sessione è scaduta. Accedi di nuovo per continuare.
+                </div>
+            </c:if>
 
             <!-- Messaggio di successo da registrazione -->
             <c:if test="${not empty msgRegistrazione}">
@@ -47,6 +40,9 @@
 
             <!-- Form di login -->
             <form class="login-form" action="${pageContext.request.contextPath}/login" method="post">
+                <!-- next nascosto, se presente torna alla pagina originale dopo il login -->
+                <input type="hidden" name="next" value="${fn:escapeXml(param.next)}"/>
+
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" required>

@@ -1,8 +1,10 @@
 package it.unisa.rapitalianostore.control;
 
+import it.unisa.rapitalianostore.dao.CarrelloDAO;   
 import it.unisa.rapitalianostore.dao.ProdottoDAO;
 import it.unisa.rapitalianostore.model.Carrello;
 import it.unisa.rapitalianostore.model.Prodotto;
+import it.unisa.rapitalianostore.model.Utente;      
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -45,6 +47,8 @@ public class CarrelloServlet extends HttpServlet {
 
         String action = request.getParameter("action");
         ProdottoDAO dao = new ProdottoDAO();
+        Utente utente = (Utente) session.getAttribute("utente");    
+        CarrelloDAO carDao = (utente != null) ? new CarrelloDAO() : null; 
 
         if ("add".equals(action)) {
             try {
@@ -52,6 +56,8 @@ public class CarrelloServlet extends HttpServlet {
                 Prodotto prodotto = dao.findById(idProdotto);
                 if (prodotto != null) {
                     carrello.aggiungiProdotto(prodotto);
+                    // persisto incremento se loggato
+                    if (utente != null) carDao.aggiungiItem(utente.getId(), idProdotto, 1);
                 }
             } catch (NumberFormatException ignore) {}
 
@@ -78,6 +84,8 @@ public class CarrelloServlet extends HttpServlet {
             try {
                 int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
                 carrello.rimuoviProdotto(idProdotto);
+                // persisto rimozione se loggato
+                if (utente != null) carDao.rimuoviItem(utente.getId(), idProdotto);
             } catch (NumberFormatException ignore) {}
 
             session.setAttribute("totaleCarrelloHeader", carrello.getTotale());
@@ -89,7 +97,10 @@ public class CarrelloServlet extends HttpServlet {
             try {
                 int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
                 int quantita = Integer.parseInt(request.getParameter("quantita"));
+                quantita = Math.max(1, quantita);                // MOD: clamp
                 carrello.aggiornaQuantita(idProdotto, quantita);
+                // persisto quantità esatta se loggato
+                if (utente != null) carDao.aggiornaQuantita(utente.getId(), idProdotto, quantita);
             } catch (NumberFormatException ignore) {}
 
             session.setAttribute("totaleCarrelloHeader", carrello.getTotale());

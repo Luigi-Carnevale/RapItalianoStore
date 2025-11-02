@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <%-- Rendo disponibile il context path al JS per le chiamate fetch --%>
+    <script>
+      window.APP_CTX = '${pageContext.request.contextPath}';
+    </script>
+
+    <%-- JS del carrello. Defer per eseguire dopo il parsing del DOM --%>
     <script defer src="${pageContext.request.contextPath}/assets/js/carrello.js"></script>
 </head>
 <body>
@@ -42,8 +49,24 @@
                             <span>${item.prodotto.titolo}</span>
                         </td>
                         <td>
-                            <input type="number" value="${item.quantita}" min="1"
-                                   onchange="aggiornaQuantita(${item.prodotto.id}, this.value, ${item.prodotto.prezzo})">
+                            <%-- Sostituito input number con stepper quantità coerente con il design --%>
+                            <div class="qty-control"
+                                 data-item-id="${item.prodotto.id}"
+                                 data-prezzo="${item.prodotto.prezzo}"
+                                 data-min="1"
+                                 data-max="99"
+                                 aria-label="Controllo quantità">
+                                <button type="button" class="qty-btn" aria-label="Diminuisci quantità">−</button>
+                                <input
+                                  type="number"
+                                  class="qty-input"
+                                  value="${item.quantita}"
+                                  min="1" max="99"
+                                  inputmode="numeric" pattern="[0-9]*"
+                                  aria-label="Quantità"
+                                />
+                                <button type="button" class="qty-btn" aria-label="Aumenta quantità">+</button>
+                            </div>
                         </td>
                         <td>
                             € <fmt:formatNumber value="${item.prodotto.prezzo}" type="number" minFractionDigits="2"/>
@@ -71,7 +94,7 @@
                     € <fmt:formatNumber value="${carrello.totale}" type="number" minFractionDigits="2"/>
                 </span>
             </h2>
-            <!-- ✅ Metodo GET → apre la pagina checkout.jsp -->
+            <!-- Metodo GET → apre la pagina checkout.jsp -->
             <form action="${pageContext.request.contextPath}/checkout" method="get">
                 <button type="submit" class="btn btn-primary">Procedi al checkout</button>
             </form>
