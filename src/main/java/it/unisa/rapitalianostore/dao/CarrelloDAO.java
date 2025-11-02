@@ -4,7 +4,9 @@ import it.unisa.rapitalianostore.utils.DBManager;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap; // MOD
 import java.util.List;
+import java.util.Map;    // MOD
 
 public class CarrelloDAO {
 
@@ -97,6 +99,57 @@ public class CarrelloDAO {
             e.printStackTrace();
         }
         return items;
+    }
+
+    /* ===========================
+       MOD: utility per snapshot/merge
+       =========================== */
+
+    /** MOD: Mappa {idProdotto -> quantita} caricata dal DB (utile per confronti/merge) */
+    public Map<Integer, Integer> mappaQuantita(int idUtente) {
+        final String sql = "SELECT id_prodotto, quantita FROM carrello_item WHERE id_utente = ?";
+        Map<Integer, Integer> map = new HashMap<>();
+        try (Connection con = DBManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUtente);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    map.put(rs.getInt(1), rs.getInt(2));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /** MOD: Sostituisce l’intero carrello con la mappa passata (operazione idempotente) */
+    public void replaceAll(int idUtente, Map<Integer, Integer> items) {
+        // Transazione semplice: svuota e reinserisce
+        try (Connection con = DBManager.getConnection()) {
+            con.setAutoCommit(false);
+            try (PreparedStatement del = con.prepareStatement("DELETE FROM carrello_item WHERE id_utente=?")) {
+                del.setInt(1, idUtente);
+                del.executeUpdate();
+            }
+            if (items != null && !items.isEmpty()) {
+                try (PreparedStatement ins = con.prepareStatement(
+                        "INSERT INTO carrello_item (id_utente, id_prodotto, quantita) VALUES (?,?,?)")) {
+                    for (Map.Entry<Integer, Integer> e : items.entrySet()) {
+                        if (e.getValue() == null || e.getValue() <= 0) continue;
+                        ins.setInt(1, idUtente);
+                        ins.setInt(2, e.getKey());
+                        ins.setInt(3, e.getValue());
+                        ins.addBatch();
+                    }
+                    ins.executeBatch();
+                }
+            }
+            con.commit();
+            con.setAutoCommit(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /** DTO semplice per non dipendere dalle tue model class */

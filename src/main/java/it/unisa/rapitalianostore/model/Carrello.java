@@ -21,7 +21,7 @@ public class Carrello {
     public void aggiornaQuantita(int idProdotto, int quantita) {
         CarrelloItem item = items.get(idProdotto);
         if (item != null) {
-            item.setQuantita(quantita);
+            item.setQuantita(Math.max(1, quantita)); // MOD: clamp minimo 1 in sessione
         }
     }
 
@@ -35,5 +35,44 @@ public class Carrello {
 
     public boolean isVuoto() {
         return items.isEmpty();
+    }
+
+    /* =======================
+       MOD: utilità per persistenza
+       ======================= */
+
+    /** MOD: vero/falso se il carrello contiene almeno un item con quantita > 0 */
+    public boolean hasItems() {
+        for (CarrelloItem it : items.values()) {
+            if (it.getQuantita() > 0) return true;
+        }
+        return false;
+    }
+
+    /** MOD: restituisce una mappa {idProdotto -> quantita} (comoda per DAO.replaceAll) */
+    public Map<Integer, Integer> toMap() {
+        Map<Integer, Integer> map = new LinkedHashMap<>();
+        for (CarrelloItem it : items.values()) {
+            if (it.getProdotto() == null) continue;
+            int q = Math.max(0, it.getQuantita());
+            if (q > 0) map.put(it.getProdotto().getId(), q);
+        }
+        return map;
+    }
+
+    /** MOD: rimpiazza tutto il contenuto a partire da una lista DTO (es. caricata dal DB) */
+    public void replaceAllFromDTOs(List<it.unisa.rapitalianostore.dao.CarrelloDAO.CarrelloItemDTO> dtos) {
+        items.clear();
+        if (dtos == null) return;
+        for (it.unisa.rapitalianostore.dao.CarrelloDAO.CarrelloItemDTO dto : dtos) {
+            Prodotto p = new Prodotto();
+            p.setId(dto.getIdProdotto());
+            p.setTitolo(dto.getTitolo());
+            p.setPrezzo(dto.getPrezzo());
+            p.setImmagine(dto.getImmagine());
+            CarrelloItem ci = new CarrelloItem(p);
+            ci.setQuantita(dto.getQuantita());
+            items.put(p.getId(), ci);
+        }
     }
 }

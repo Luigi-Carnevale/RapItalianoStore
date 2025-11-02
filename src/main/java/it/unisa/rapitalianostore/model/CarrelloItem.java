@@ -13,7 +13,7 @@ public class CarrelloItem {
     public void setProdotto(Prodotto prodotto) { this.prodotto = prodotto; }
 
     public int getQuantita() { return quantita; }
-    public void setQuantita(int quantita) { this.quantita = quantita; }
+    public void setQuantita(int quantita) { this.quantita = Math.max(1, quantita); } // MOD: clamp minimo
 
     public void incrementaQuantita() { this.quantita++; }
     public void decrementaQuantita() { if (this.quantita > 1) this.quantita--; }
