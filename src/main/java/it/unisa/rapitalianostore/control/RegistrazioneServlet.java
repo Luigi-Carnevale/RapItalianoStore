@@ -23,16 +23,56 @@ public class RegistrazioneServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
+        // nuovi parametri
+        String email    = request.getParameter("email");
+        String username = request.getParameter("username");    
         String password = request.getParameter("password");
+        String conferma = request.getParameter("conferma");    
 
-        Utente nuovo = new Utente();
-        nuovo.setEmail(email);
+        if (email != null) email = email.trim();
+        if (username != null) username = username.trim();
 
         UtenteDAO dao = new UtenteDAO();
 
+        // validazioni semplici lato server
+        if (email == null || email.isEmpty()
+                || username == null || username.isEmpty()
+                || password == null || password.isEmpty()
+                || conferma == null || conferma.isEmpty()) {
+            request.setAttribute("error", "Compila tutti i campi obbligatori.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/registrazione.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        if (!password.equals(conferma)) { 
+            request.setAttribute("error", "Le password non coincidono.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/registrazione.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        // vincoli di unicità
+        if (dao.existsByEmail(email)) {
+            request.setAttribute("error", "Email già registrata.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/registrazione.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+        if (dao.existsByUsername(username)) {
+            request.setAttribute("error", "Username non disponibile.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/registrazione.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
         // Hash password
         String hashedPassword = dao.hashPassword(password);
+
+        // Prepara oggetto utente
+        Utente nuovo = new Utente();
+        nuovo.setEmail(email);
+        nuovo.setUsername(username);   
         nuovo.setPassword(hashedPassword);
         nuovo.setRuolo("cliente");
 
@@ -46,10 +86,9 @@ public class RegistrazioneServlet extends HttpServlet {
             // redirect alla servlet login
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
-            request.setAttribute("error", "Errore nella registrazione");
+            request.setAttribute("error", "Errore nella registrazione (email o username già in uso).");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/registrazione.jsp");
             dispatcher.forward(request, response);
         }
     }
 }
-
