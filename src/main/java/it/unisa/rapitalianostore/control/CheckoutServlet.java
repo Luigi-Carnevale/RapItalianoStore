@@ -37,7 +37,7 @@ public class CheckoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 🔒 Controllo login
+        // Controllo login
         if (!AuthUtils.requireLogin(request, response)) return;
 
         // Passo il token sessione alla JSP
@@ -51,18 +51,18 @@ public class CheckoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 🔒 Controllo login
+        // Controllo login
         if (!AuthUtils.requireLogin(request, response)) return;
 
         // ====== RAMO AJAX ======
         if ("1".equals(request.getParameter("ajax"))) {
             String mode = request.getParameter("mode");
             if ("all".equals(mode)) {
-                // ✅ Validazione COMPLETA di tutti i campi (per submit)
+                // Validazione COMPLETA di tutti i campi (per submit)
                 handleAjaxValidateAll(request, response);
                 return;
             } else {
-                // ✅ Validazione campo singolo (digitazione live)
+                // Validazione campo singolo (digitazione live)
                 handleAjaxValidation(request, response);
                 return;
             }

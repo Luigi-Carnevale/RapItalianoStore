@@ -7,15 +7,29 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO per la gestione degli Ordini.
+ *
+ * Include:
+ *  - salvaOrdine(...)                 : creazione ordine + dettagli
+ *  - findByUtenteWithDettagli(...)    : ordini di un utente con righe
+ *  - findByUtenteWithFilters(...)     : ordini di un utente con FILTRI (data/artista)  
+ *  - findAll()                        : tutti gli ordini (admin) con email cliente
+ *  - findByFilter(...)                : ricerca admin per data/email
+ *  - findDettagliByOrdine(...)        : righe ordine
+ *
+ * NOTE:
+ *  - Per l'indirizzo uso una stringa unica "indirizzo_spedizione" (composizione in servlet).
+ */
 public class OrdineDAO {
 
     // =====================================================
-    // Salvataggio nuovo ordine
+    // Creazione nuovo ordine
     // =====================================================
-    public boolean salvaOrdine(Utente utente, Carrello carrello, String indirizzo, String metodoPagamento) {
-        String sqlOrdine =
+    public boolean salvaOrdine(Utente utente, Carrello carrello, String indirizzoCompleto, String metodoPagamento) {
+        final String sqlOrdine =
             "INSERT INTO ordini (id_utente, totale, indirizzo_spedizione, metodo_pagamento) VALUES (?, ?, ?, ?)";
-        String sqlDettaglio =
+        final String sqlDettaglio =
             "INSERT INTO ordine_dettagli " +
             "(id_ordine, id_prodotto, quantita, prezzo_unitario, titolo_prodotto, immagine_prodotto) " +
             "VALUES (?,?,?,?,?,?)";
@@ -28,7 +42,7 @@ public class OrdineDAO {
 
             psOrd.setInt(1, utente.getId());
             psOrd.setDouble(2, carrello.getTotale());
-            psOrd.setString(3, indirizzo);
+            psOrd.setString(3, indirizzoCompleto);   // stringa completa composta in servlet
             psOrd.setString(4, metodoPagamento);
             psOrd.executeUpdate();
 
@@ -43,7 +57,9 @@ public class OrdineDAO {
 
             for (CarrelloItem item : carrello.getItems()) {
                 psDet.setInt(1, idOrdine);
-                psDet.setObject(2, item.getProdotto() != null ? item.getProdotto().getId() : null, Types.INTEGER);
+                psDet.setObject(2,
+                        item.getProdotto() != null ? item.getProdotto().getId() : null,
+                        Types.INTEGER);
                 psDet.setInt(3, item.getQuantita());
                 psDet.setDouble(4, item.getProdotto().getPrezzo());
                 psDet.setString(5, item.getProdotto().getTitolo());
@@ -62,13 +78,15 @@ public class OrdineDAO {
     }
 
     // =====================================================
-    // Ordini di un utente con dettagli prodotti
+    // Ordini (con dettagli) per un utente
     // =====================================================
     public List<Ordine> findByUtenteWithDettagli(int idUtente) {
-        String sql = "SELECT * FROM ordini WHERE id_utente = ? ORDER BY data_ordine DESC";
+        final String sql = "SELECT * FROM ordini WHERE id_utente = ? ORDER BY data_ordine DESC";
         List<Ordine> ordini = new ArrayList<>();
+
         try (Connection con = DBManager.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, idUtente);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -84,21 +102,53 @@ public class OrdineDAO {
     }
 
     // =====================================================
-    // Lista completa di tutti gli ordini (per admin, con email cliente)
+    // Ordini (con filtri) per un utente  // MOD
     // =====================================================
-    public List<Ordine> findAll() {
-        String sql = "SELECT o.*, u.email AS email_utente " +
-                     "FROM ordini o JOIN utenti u ON o.id_utente = u.id_utente " +
-                     "ORDER BY o.data_ordine DESC";
+    public List<Ordine> findByUtenteWithFilters(int idUtente, String dataInizio, String dataFine, Integer idArtista) {
+        /*
+          Filtro per artista usando join su dettagli + prodotti (p.id_artista).
+          Uso DISTINCT per evitare duplicati di ordini con più righe compatibili col filtro.
+        */
+        StringBuilder sql = new StringBuilder(
+            "SELECT DISTINCT o.* " +
+            "FROM ordini o " +
+            "LEFT JOIN ordine_dettagli d ON d.id_ordine = o.id_ordine " +
+            "LEFT JOIN prodotti p ON p.id_prodotto = d.id_prodotto " +
+            "WHERE o.id_utente = ?"
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(idUtente);
+
+        if (dataInizio != null) {
+            sql.append(" AND o.data_ordine >= ?");
+            params.add(Timestamp.valueOf(dataInizio + " 00:00:00"));
+        }
+        if (dataFine != null) {
+            sql.append(" AND o.data_ordine <= ?");
+            params.add(Timestamp.valueOf(dataFine + " 23:59:59"));
+        }
+        if (idArtista != null) {
+            sql.append(" AND p.id_artista = ?");
+            params.add(idArtista);
+        }
+
+        sql.append(" ORDER BY o.data_ordine DESC");
+
         List<Ordine> ordini = new ArrayList<>();
         try (Connection con = DBManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Ordine o = mapOrdineBase(rs);
-                o.setEmailUtente(rs.getString("email_utente"));
-                o.setDettagli(findDettagliByOrdine(o.getId()));
-                ordini.add(o);
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Ordine o = mapOrdineBase(rs);
+                    o.setDettagli(findDettagliByOrdine(o.getId()));
+                    ordini.add(o);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +157,35 @@ public class OrdineDAO {
     }
 
     // =====================================================
-    // Filtri per admin (date e email cliente)
+    // Tutti gli ordini (admin) + email cliente
+    // =====================================================
+    public List<Ordine> findAll() {
+        final String sql =
+            "SELECT o.*, u.email AS email_utente " +
+            "FROM ordini o JOIN utenti u ON o.id_utente = u.id_utente " +
+            "ORDER BY o.data_ordine DESC";
+
+        List<Ordine> ordini = new ArrayList<>();
+
+        try (Connection con = DBManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Ordine o = mapOrdineBase(rs);
+                o.setEmailUtente(rs.getString("email_utente"));
+                o.setDettagli(findDettagliByOrdine(o.getId()));
+                ordini.add(o);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ordini;
+    }
+
+    // =====================================================
+    // Ricerca ordini (admin) con filtri opzionali su data/email
     // =====================================================
     public List<Ordine> findByFilter(String dataInizio, String dataFine, String clienteEmail) {
         StringBuilder sql = new StringBuilder(
@@ -154,15 +232,18 @@ public class OrdineDAO {
     }
 
     // =====================================================
-    // Dettagli di un ordine
+    // Dettagli (righe) di un ordine
     // =====================================================
     public List<OrdineDettaglio> findDettagliByOrdine(int idOrdine) {
-        String sqlDet =
+        final String sqlDet =
             "SELECT id_dettaglio, id_prodotto, quantita, prezzo_unitario, titolo_prodotto, immagine_prodotto " +
             "FROM ordine_dettagli WHERE id_ordine = ?";
+
         List<OrdineDettaglio> dettagli = new ArrayList<>();
+
         try (Connection con = DBManager.getConnection();
              PreparedStatement ps = con.prepareStatement(sqlDet)) {
+
             ps.setInt(1, idOrdine);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -188,7 +269,7 @@ public class OrdineDAO {
     private Ordine mapOrdineBase(ResultSet rs) throws SQLException {
         Ordine o = new Ordine();
         o.setId(rs.getInt("id_ordine"));
-        o.setIdUtente(rs.getInt("id_utente"));  // id utente
+        o.setIdUtente(rs.getInt("id_utente"));
         o.setDataOrdine(rs.getTimestamp("data_ordine"));
         o.setTotale(rs.getDouble("totale"));
         o.setIndirizzoSpedizione(rs.getString("indirizzo_spedizione"));

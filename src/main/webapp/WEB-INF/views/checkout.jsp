@@ -28,13 +28,13 @@
     </c:if>
 
     <!--
-      MOD: onsubmit intercettato via JS:
+      onsubmit intercettato via JS:
            1) facciamo validazione AJAX completa (senza ricaricare)
            2) se ok, proseguiamo con submit normale (server salva ordine)
     -->
     <form id="checkoutForm" action="${pageContext.request.contextPath}/checkout" method="post" class="form">
 
-        <!-- ✅ Token di sessione (CSRF/sessione) -->
+        <!-- Token di sessione (CSRF/sessione) -->
         <input type="hidden" name="sessionToken" value="${sessionScope.sessionToken}">
 
         <!-- =======================
@@ -45,7 +45,7 @@
                 <label for="nome">Nome *</label>
                 <input type="text" id="nome" name="nome" required>
                 <small class="hint" id="hint-nome"></small>
-                <small class="error-msg" id="err-nome"></small> <!-- MOD: errore inline -->
+                <small class="error-msg" id="err-nome"></small> <!-- errore inline -->
             </div>
             <div class="form-group">
                 <label for="cognome">Cognome *</label>
@@ -183,7 +183,7 @@ function showFieldError(fieldId, message){
 }
 
 /* ============================
-   AJAX: validazione singolo campo (già presente)
+   AJAX: validazione singolo campo
    ============================ */
 async function validaCampoAjax(field, value) {
     try {
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const fd = new URLSearchParams(new FormData(form));
         fd.append("ajax", "1");
-        fd.append("mode", "all"); // MOD: validazione completa lato server
+        fd.append("mode", "all"); // validazione completa lato server
 
         try {
             const resp = await fetch("${pageContext.request.contextPath}/checkout", {
@@ -256,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: fd.toString()
             });
             const data = await resp.json(); // {ok:boolean, errors?:{field:msg}, focus?:field}
-
             if (data.ok) {
                 // Tutto valido -> procedi con submit normale (salva ordine)
                 form.submit();
