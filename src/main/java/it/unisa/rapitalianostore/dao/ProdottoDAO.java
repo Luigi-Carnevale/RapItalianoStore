@@ -14,9 +14,11 @@ public class ProdottoDAO {
     // Trova tutti i prodotti con join sugli artisti
     public List<Prodotto> findAll() {
         List<Prodotto> lista = new ArrayList<>();
-        String sql = "SELECT p.*, a.id_artista AS a_id, a.nome AS a_nome, a.genere AS a_genere, " +
+        String sql = "SELECT p.*, " +
+                     "a.id_artista AS a_id, a.nome AS a_nome, a.genere AS a_genere, " +
                      "a.bio AS a_bio, a.immagine AS a_immagine " +
-                     "FROM prodotti p LEFT JOIN artisti a ON p.id_artista = a.id_artista";
+                     "FROM prodotti p LEFT JOIN artisti a ON p.id_artista = a.id_artista " +
+                     "ORDER BY p.id_prodotto ASC"; // ASC per avere ID1 in cima
 
         try (Connection con = DBManager.getConnection();
              Statement st = con.createStatement();
@@ -35,7 +37,7 @@ public class ProdottoDAO {
 
     // Alias
     public List<Prodotto> findAllWithArtisti() {
-        return findAll();
+        return findAll(); // stesso ordinamento ASC
     }
 
     // Trova prodotti filtrati
@@ -61,6 +63,8 @@ public class ProdottoDAO {
         if (artistaId != null && !artistaId.isBlank()) {
             sql.append(" AND p.id_artista = ?");
         }
+
+        sql.append(" ORDER BY p.id_prodotto ASC"); // ordinamento crescente
 
         try (Connection con = DBManager.getConnection();
              PreparedStatement ps = con.prepareStatement(sql.toString())) {
@@ -115,20 +119,35 @@ public class ProdottoDAO {
         String sql = "INSERT INTO prodotti (titolo, prezzo, immagine, descrizione, id_artista) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection con = DBManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 
             ps.setString(1, prodotto.getTitolo());
             ps.setDouble(2, prodotto.getPrezzo());
             ps.setString(3, prodotto.getImmagine());
             ps.setString(4, prodotto.getDescrizione());
-            ps.setInt(5, prodotto.getIdArtista());
 
-            return ps.executeUpdate() > 0;
+            // id_artista opzionale -> setNull quando 0 o assente
+            if (prodotto.getIdArtista() > 0) {
+                ps.setInt(5, prodotto.getIdArtista());
+            } else {
+                ps.setNull(5, Types.INTEGER);
+            }
+
+            int updated = ps.executeUpdate();
+            if (updated > 0) {
+                try (ResultSet keys = ps.getGeneratedKeys()) {     // prendo l'ID generato
+                    if (keys.next()) {
+                        prodotto.setId(keys.getInt(1));
+                    }
+                }
+                return true;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+        return false;
     }
 
     // Aggiorna un prodotto esistente
@@ -142,7 +161,14 @@ public class ProdottoDAO {
             ps.setDouble(2, prodotto.getPrezzo());
             ps.setString(3, prodotto.getImmagine());
             ps.setString(4, prodotto.getDescrizione());
-            ps.setInt(5, prodotto.getIdArtista());
+
+            // id_artista opzionale -> setNull quando 0 o assente
+            if (prodotto.getIdArtista() > 0) {
+                ps.setInt(5, prodotto.getIdArtista());
+            } else {
+                ps.setNull(5, Types.INTEGER);
+            }
+
             ps.setInt(6, prodotto.getId());
 
             return ps.executeUpdate() > 0;
@@ -169,7 +195,7 @@ public class ProdottoDAO {
         }
     }
 
-    // 🔹 Trova recensioni di un prodotto
+    // Trova recensioni di un prodotto
     public List<Recensione> findRecensioniByProdotto(int idProdotto) {
         RecensioneDAO dao = new RecensioneDAO();
         return dao.findByProdotto(idProdotto);
@@ -184,8 +210,12 @@ public class ProdottoDAO {
         p.setPrezzo(rs.getDouble("prezzo"));
         p.setImmagine(rs.getString("immagine"));
         p.setDescrizione(rs.getString("descrizione"));
-        p.setIdArtista(rs.getInt("id_artista"));
 
+        // se id_artista DB è NULL -> 0 nella model
+        Object idArtistaObj = rs.getObject("id_artista");
+        p.setIdArtista(idArtistaObj == null ? 0 : rs.getInt("id_artista"));
+
+        // Artista LEFT JOIN: può essere null -> creo comunque oggetto "vuoto"
         Artista a = new Artista();
         a.setId(rs.getInt("a_id"));
         a.setNome(rs.getString("a_nome"));

@@ -11,7 +11,7 @@ public class ArtistaDAO {
 
     public List<Artista> findAll() {
         List<Artista> artisti = new ArrayList<>();
-        String sql = "SELECT * FROM artisti";
+        String sql = "SELECT * FROM artisti ORDER BY id_artista ASC"; // ASC
 
         try (Connection conn = DBManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -28,10 +28,10 @@ public class ArtistaDAO {
         return artisti;
     }
 
-    // 🔎 Trova artisti filtrando per nome (parziale, case-insensitive)
+    // Trova artisti filtrando per nome (parziale, case-insensitive)
     public List<Artista> findByNome(String q) {
         List<Artista> artisti = new ArrayList<>();
-        String sql = "SELECT * FROM artisti WHERE LOWER(nome) LIKE LOWER(?)";
+        String sql = "SELECT * FROM artisti WHERE LOWER(nome) LIKE LOWER(?) ORDER BY id_artista ASC"; // ASC
 
         try (Connection conn = DBManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -74,14 +74,23 @@ public class ArtistaDAO {
         String sql = "INSERT INTO artisti (nome, genere, bio, immagine) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 
             ps.setString(1, a.getNome());
             ps.setString(2, a.getGenere());
             ps.setString(3, a.getBio());
             ps.setString(4, a.getImmagine());
 
-            return ps.executeUpdate() > 0;
+            int updated = ps.executeUpdate();
+            if (updated > 0) {
+                try (ResultSet keys = ps.getGeneratedKeys()) {    
+                    if (keys.next()) {
+                        a.setId(keys.getInt(1));
+                    }
+                }
+                return true;
+            }
+            return false;
 
         } catch (SQLException e) {
             e.printStackTrace();
