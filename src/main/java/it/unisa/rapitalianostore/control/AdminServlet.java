@@ -14,10 +14,11 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        Utente utente = (Utente) session.getAttribute("utente");
+        // in genere già coperto da AdminAuthFilter; lasciamo una guardia di sicurezza.
+        HttpSession session = request.getSession(false);
+        Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
 
-        if (utente == null || !"admin".equals(utente.getRuolo())) {
+        if (utente == null || !"admin".equalsIgnoreCase(utente.getRuolo())) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }

@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-
 <body>
 
 <jsp:include page="header.jsp" />
@@ -22,16 +21,25 @@
             <c:if test="${not empty artista}">Modifica Artista</c:if>
         </h2>
 
+        <!-- azioni esplicite + CSRF -->
         <form action="${pageContext.request.contextPath}/artistiAdmin"
               method="post"
               enctype="multipart/form-data"
               accept-charset="UTF-8"
               class="admin-form">
 
-            <c:if test="${not empty artista}">
-                <input type="hidden" name="id" value="${artista.id}">
-                <input type="hidden" name="oldImage" value="${artista.immagine}">
-            </c:if>
+            <c:choose>
+                <c:when test="${empty artista}">
+                    <input type="hidden" name="action" value="create"/> 
+                </c:when>
+                <c:otherwise>
+                    <input type="hidden" name="action" value="update"/> 
+                    <input type="hidden" name="id" value="${artista.id}">
+                    <input type="hidden" name="oldImage" value="${artista.immagine}">
+                </c:otherwise>
+            </c:choose>
+
+            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/> 
 
             <div class="form-group">
                 <label for="nome">Nome</label>

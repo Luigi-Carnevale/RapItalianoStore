@@ -27,10 +27,20 @@
               accept-charset="UTF-8"
               class="admin-form">
 
-            <c:if test="${not empty prodotto}">
-                <input type="hidden" name="id" value="${prodotto.id}">
-                <input type="hidden" name="oldImage" value="${prodotto.immagine}">
-            </c:if>
+            <!-- azione sempre specificata -->
+            <c:choose>
+                <c:when test="${empty prodotto}">
+                    <input type="hidden" name="action" value="create" /> 
+                </c:when>
+                <c:otherwise>
+                    <input type="hidden" name="action" value="update" /> 
+                    <input type="hidden" name="id" value="${prodotto.id}">
+                    <input type="hidden" name="oldImage" value="${prodotto.immagine}">
+                </c:otherwise>
+            </c:choose>
+
+            <!-- csrf -->
+            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/> 
 
             <!-- Titolo -->
             <div class="form-group">
@@ -41,9 +51,7 @@
             <!-- Descrizione -->
             <div class="form-group">
                 <label for="descrizione">Descrizione</label>
-                <textarea id="descrizione" name="descrizione" rows="5" required>
-${prodotto.descrizione}
-                </textarea>
+                <textarea id="descrizione" name="descrizione" rows="5">${prodotto.descrizione}</textarea>
             </div>
 
             <!-- Prezzo -->
@@ -56,14 +64,18 @@ ${prodotto.descrizione}
             <div class="form-group">
                 <label for="immagine">Immagine</label>
                 <input type="file" id="immagine" name="immagine" accept="image/*">
+                <c:if test="${not empty prodotto.immagine}">
+                    <p>Immagine attuale: ${prodotto.immagine}</p>
+                </c:if>
             </div>
 
-            <!-- Artista -->
+            <!-- Artista (opzionale) -->
             <div class="form-group">
-                <label for="idArtista">Artista</label>
-                <select id="idArtista" name="idArtista" required>
+                <label for="idArtista">Artista (opzionale)</label>
+                <select id="idArtista" name="idArtista">
+                    <option value="">-- Nessuno --</option>
                     <c:forEach var="artista" items="${artisti}">
-                        <option value="${artista.id}" <c:if test="${prodotto.idArtista == artista.id}">selected</c:if>>
+                        <option value="${artista.id}" <c:if test="${not empty prodotto && prodotto.idArtista == artista.id}">selected</c:if>>
                             ${artista.nome}
                         </option>
                     </c:forEach>

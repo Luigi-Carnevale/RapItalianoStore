@@ -19,9 +19,14 @@
         <h2>Gestione Artisti</h2>
 
         <div class="admin-actions" style="margin-bottom: 1rem;">
-            <a href="${pageContext.request.contextPath}/artistiAdmin?action=addForm" class="btn btn-primary">➕ Aggiungi Artista</a>
+            <!-- new via GET -->
+            <a href="${pageContext.request.contextPath}/artistiAdmin?action=new" class="btn btn-primary">➕ Aggiungi Artista</a>
             <a href="${pageContext.request.contextPath}/admin" class="btn btn-secondary">🏠 Dashboard Admin</a>
         </div>
+
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">${error}</div>
+        </c:if>
 
         <table class="admin-table">
             <thead>
@@ -40,9 +45,17 @@
                         <td>${artista.nome}</td>
                         <td>${artista.genere}</td>
                         <td><img src="${pageContext.request.contextPath}/assets/img/${artista.immagine}" alt="${artista.nome}" style="width:50px; height:50px; object-fit:cover;"></td>
-                        <td>
+                        <td style="white-space:nowrap;">
+                            <!-- edit via GET -->
                             <a href="${pageContext.request.contextPath}/artistiAdmin?action=edit&id=${artista.id}" class="btn btn-secondary">✏️ Modifica</a>
-                            <a href="${pageContext.request.contextPath}/artistiAdmin?action=delete&id=${artista.id}" class="btn btn-secondary" onclick="return confirm('Sei sicuro di voler eliminare questo artista?');">🗑 Elimina</a>
+
+                            <!-- delete via POST + CSRF -->
+                            <form action="${pageContext.request.contextPath}/artistiAdmin" method="post" style="display:inline">
+                                <input type="hidden" name="action" value="delete"/>
+                                <input type="hidden" name="id" value="${artista.id}"/>
+                                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
+                                <button type="submit" class="btn btn-secondary" onclick="return confirm('Sei sicuro di voler eliminare questo artista?');">🗑 Elimina</button>
+                            </form>
                         </td>
                     </tr>
                 </c:forEach>

@@ -19,9 +19,14 @@
         <h2>Gestione Prodotti</h2>
 
         <div class="admin-actions" style="margin-bottom: 1rem;">
-            <a href="${pageContext.request.contextPath}/prodottiAdmin?action=addForm" class="btn btn-primary">➕ Aggiungi Prodotto</a>
+            <!-- action=new richiama showCreateForm di BaseAdminServlet -->
+            <a href="${pageContext.request.contextPath}/prodottiAdmin?action=new" class="btn btn-primary">➕ Aggiungi Prodotto</a> 
             <a href="${pageContext.request.contextPath}/admin" class="btn btn-secondary">🏠 Dashboard Admin</a>
         </div>
+
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">${error}</div> <!-- errori lato server -->
+        </c:if>
 
         <table class="admin-table">
             <thead>
@@ -42,9 +47,17 @@
                         <td>€ ${prodotto.prezzo}</td>
                         <td>${prodotto.artista.nome}</td>
                         <td><img src="${pageContext.request.contextPath}/assets/img/${prodotto.immagine}" alt="${prodotto.titolo}" style="width:50px; height:50px; object-fit:cover;"></td>
-                        <td>
+                        <td style="white-space:nowrap;">
+                            <!-- Modifica via GET -->
                             <a href="${pageContext.request.contextPath}/prodottiAdmin?action=edit&id=${prodotto.id}" class="btn btn-secondary">✏️ Modifica</a>
-                            <a href="${pageContext.request.contextPath}/prodottiAdmin?action=delete&id=${prodotto.id}" class="btn btn-secondary" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">🗑 Elimina</a>
+
+                            <!-- Elimina via POST + CSRF -->
+                            <form action="${pageContext.request.contextPath}/prodottiAdmin" method="post" style="display:inline">
+                                <input type="hidden" name="action" value="delete"/>
+                                <input type="hidden" name="id" value="${prodotto.id}"/>
+                                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/> 
+                                <button type="submit" class="btn btn-secondary" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">🗑 Elimina</button>
+                            </form>
                         </td>
                     </tr>
                 </c:forEach>

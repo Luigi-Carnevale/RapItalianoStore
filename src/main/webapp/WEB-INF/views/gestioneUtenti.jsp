@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestione utenti</title>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -22,6 +22,10 @@
             <a href="${pageContext.request.contextPath}/admin" class="btn btn-secondary">🏠 Dashboard Admin</a>
         </div>
 
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">${error}</div>
+        </c:if>
+
         <table class="admin-table">
             <thead>
                 <tr>
@@ -37,20 +41,38 @@
                         <td>${utente.id}</td>
                         <td>${utente.email}</td>
                         <td>${utente.ruolo}</td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/utentiAdmin?action=delete&id=${utente.id}" 
-                               class="btn btn-secondary" 
-                               onclick="return confirm('Sei sicuro di voler eliminare questo utente?');">🗑 Elimina</a>
+                        <td style="white-space:nowrap;">
 
+                            <!-- DELETE via POST + CSRF -->
+                            <form action="${pageContext.request.contextPath}/utentiAdmin" method="post" style="display:inline">
+                                <input type="hidden" name="action" value="delete"/>
+                                <input type="hidden" name="id" value="${utente.id}"/>
+                                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
+                                <button type="submit" class="btn btn-secondary" onclick="return confirm('Eliminare questo utente?');">🗑 Elimina</button>
+                            </form>
+
+                            <!-- PROMOTE via POST + CSRF -->
                             <c:if test="${utente.ruolo == 'cliente'}">
-                                <a href="${pageContext.request.contextPath}/utentiAdmin?action=promote&id=${utente.id}" 
-                                   class="btn btn-secondary">⬆️ Promuovi a Admin</a>
+                                <form action="${pageContext.request.contextPath}/utentiAdmin" method="post" style="display:inline">
+                                    <input type="hidden" name="action" value="update"/>
+                                    <input type="hidden" name="subAction" value="promote"/>
+                                    <input type="hidden" name="id" value="${utente.id}"/>
+                                    <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
+                                    <button type="submit" class="btn btn-secondary">⬆️ Promuovi a Admin</button>
+                                </form>
                             </c:if>
 
+                            <!-- DEMOTE via POST + CSRF -->
                             <c:if test="${utente.ruolo == 'admin'}">
-                                <a href="${pageContext.request.contextPath}/utentiAdmin?action=demote&id=${utente.id}" 
-                                   class="btn btn-secondary">⬇️ Declassa a Cliente</a>
+                                <form action="${pageContext.request.contextPath}/utentiAdmin" method="post" style="display:inline">
+                                    <input type="hidden" name="action" value="update"/>
+                                    <input type="hidden" name="subAction" value="demote"/>
+                                    <input type="hidden" name="id" value="${utente.id}"/>
+                                    <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
+                                    <button type="submit" class="btn btn-secondary">⬇️ Declassa a Cliente</button>
+                                </form>
                             </c:if>
+
                         </td>
                     </tr>
                 </c:forEach>
