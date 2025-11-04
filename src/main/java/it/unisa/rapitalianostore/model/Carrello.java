@@ -1,7 +1,13 @@
 package it.unisa.rapitalianostore.model;
 
 import java.util.*;
+import it.unisa.rapitalianostore.dao.CarrelloDAO; // solo per il tipo nel metodo replaceAllFromDTOs (fully qualified nel corpo)
 
+/**
+ * Carrello in sessione (guest/loggato).
+ * 
+ * aggiunte utility per merge/persistenza (hasItems, toMap, replaceAllFromDTOs).
+ */
 public class Carrello {
     private Map<Integer, CarrelloItem> items = new HashMap<>();
 
@@ -21,7 +27,7 @@ public class Carrello {
     public void aggiornaQuantita(int idProdotto, int quantita) {
         CarrelloItem item = items.get(idProdotto);
         if (item != null) {
-            item.setQuantita(Math.max(1, quantita)); // MOD: clamp minimo 1 in sessione
+            item.setQuantita(Math.max(1, quantita)); // clamp minimo 1 in sessione
         }
     }
 
@@ -38,10 +44,10 @@ public class Carrello {
     }
 
     /* =======================
-       MOD: utilità per persistenza
+       utilità per persistenza
        ======================= */
 
-    /** MOD: vero/falso se il carrello contiene almeno un item con quantita > 0 */
+    /** vero/falso se il carrello contiene almeno un item con quantita > 0 */
     public boolean hasItems() {
         for (CarrelloItem it : items.values()) {
             if (it.getQuantita() > 0) return true;
@@ -49,7 +55,7 @@ public class Carrello {
         return false;
     }
 
-    /** MOD: restituisce una mappa {idProdotto -> quantita} (comoda per DAO.replaceAll) */
+    /** restituisce una mappa {idProdotto -> quantita} (comoda per DAO.replaceAll o merge) */
     public Map<Integer, Integer> toMap() {
         Map<Integer, Integer> map = new LinkedHashMap<>();
         for (CarrelloItem it : items.values()) {
@@ -60,7 +66,7 @@ public class Carrello {
         return map;
     }
 
-    /** MOD: rimpiazza tutto il contenuto a partire da una lista DTO (es. caricata dal DB) */
+    /** rimpiazza tutto il contenuto a partire da una lista DTO (es. caricata dal DB) */
     public void replaceAllFromDTOs(List<it.unisa.rapitalianostore.dao.CarrelloDAO.CarrelloItemDTO> dtos) {
         items.clear();
         if (dtos == null) return;

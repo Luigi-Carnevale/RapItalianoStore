@@ -9,6 +9,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
+/**
+ * quando l'utente è loggato, persiste su DB le modifiche di quantità.
+ */
 @WebServlet("/carrelloAjax")
 public class CarrelloAjaxServlet extends HttpServlet {
 

@@ -1,8 +1,8 @@
 package it.unisa.rapitalianostore.control;
 
-import it.unisa.rapitalianostore.dao.CarrelloDAO;        // MOD
+import it.unisa.rapitalianostore.dao.CarrelloDAO;        
 import it.unisa.rapitalianostore.dao.UtenteDAO;
-import it.unisa.rapitalianostore.model.Carrello;         // MOD
+import it.unisa.rapitalianostore.model.Carrello;         
 import it.unisa.rapitalianostore.model.Utente;
 import utils.SessionManager;
 import utils.AuthUtils;
@@ -11,8 +11,14 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.List;                                     // MOD
+import java.util.List;                                     
+import java.util.Map;                                     
 
+/**
+ * Servlet di login.
+ * implementato il merge del carrello guest → DB utente e reload in sessione.
+ * prendo lo snapshot del carrello PRIMA di creare la nuova sessione (che invalida la vecchia).
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
@@ -55,19 +61,31 @@ public class LoginServlet extends HttpServlet {
                 AuthUtils.verificaPassword(password, utente.getPassword());
 
         if (ok) {
-            // Crea la sessione e il token di sicurezza
+
+            /* ============================
+               snapshot del carrello guest PRIMA di creare la nuova sessione
+               (creaSessione può chiamare invalidate(); non possiamo leggere 'carrello' dopo)
+               ============================ */
+            Map<Integer,Integer> guestSnapshot = null;           
+            HttpSession oldSession = request.getSession(false);   // non creare se non esiste
+            if (oldSession != null) {                             
+                Carrello guest = (Carrello) oldSession.getAttribute("carrello");
+                if (guest != null && guest.hasItems()) {
+                    guestSnapshot = guest.toMap();                // mappa {idProdotto->quantita}
+                }
+            }
+
+            // Crea la sessione e il token di sicurezza (probabile invalidate + nuova sessione)
             SessionManager.creaSessione(request, utente);
 
             /* ============================
-               MOD: Merge carrello guest → DB e reload in sessione
+               Merge carrello guest → DB usando lo snapshot
                ============================ */
-            HttpSession s = request.getSession();
-            Carrello guestCart = (Carrello) s.getAttribute("carrello");
+            HttpSession s = request.getSession();                 // nuova sessione
             CarrelloDAO carDao = new CarrelloDAO();
 
-            // 1) Se l'utente aveva messo prodotti da guest, li sommo al DB
-            if (guestCart != null && guestCart.hasItems()) {
-                guestCart.toMap().forEach((idProdotto, quantita) -> {
+            if (guestSnapshot != null && !guestSnapshot.isEmpty()) { // usa snapshot
+                guestSnapshot.forEach((idProdotto, quantita) -> {
                     if (quantita != null && quantita > 0) {
                         carDao.aggiungiItem(utente.getId(), idProdotto, quantita);
                     }
@@ -82,7 +100,7 @@ public class LoginServlet extends HttpServlet {
             s.setAttribute("totaleCarrelloHeader", merged.getTotale());
 
             /* ============================
-               MOD: Supporto al parametro "next"
+               Supporto al parametro "next"
                - Se il filtro ha passato ?next=..., torna lì dopo il login
                - Safe redirect: accetto solo URL interni (che iniziano con contextPath)
                ============================ */

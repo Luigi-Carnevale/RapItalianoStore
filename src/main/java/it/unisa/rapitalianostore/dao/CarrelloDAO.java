@@ -4,10 +4,14 @@ import it.unisa.rapitalianostore.utils.DBManager;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap; // MOD
+import java.util.HashMap; 
 import java.util.List;
-import java.util.Map;    // MOD
+import java.util.Map;    
 
+/**
+ * DAO del carrello persistente lato DB.
+ * MOD: aggiunte utility per snapshot/merge e DTO per carico dettagli.
+ */
 public class CarrelloDAO {
 
     /** Aggiunge (o incrementa) un item nel carrello utente */
@@ -102,10 +106,10 @@ public class CarrelloDAO {
     }
 
     /* ===========================
-       MOD: utility per snapshot/merge
+       utility per snapshot/merge
        =========================== */
 
-    /** MOD: Mappa {idProdotto -> quantita} caricata dal DB (utile per confronti/merge) */
+    /** Mappa {idProdotto -> quantita} caricata dal DB (utile per confronti/merge) */
     public Map<Integer, Integer> mappaQuantita(int idUtente) {
         final String sql = "SELECT id_prodotto, quantita FROM carrello_item WHERE id_utente = ?";
         Map<Integer, Integer> map = new HashMap<>();
@@ -123,7 +127,7 @@ public class CarrelloDAO {
         return map;
     }
 
-    /** MOD: Sostituisce l’intero carrello con la mappa passata (operazione idempotente) */
+    /** Sostituisce l’intero carrello con la mappa passata (operazione idempotente) */
     public void replaceAll(int idUtente, Map<Integer, Integer> items) {
         // Transazione semplice: svuota e reinserisce
         try (Connection con = DBManager.getConnection()) {
@@ -152,7 +156,7 @@ public class CarrelloDAO {
         }
     }
 
-    /** DTO semplice per non dipendere dalle tue model class */
+    /** DTO semplice per non dipendere dalle model class */
     public static class CarrelloItemDTO {
         private int idProdotto;
         private int quantita;

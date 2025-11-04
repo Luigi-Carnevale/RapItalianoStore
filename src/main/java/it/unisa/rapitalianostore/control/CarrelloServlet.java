@@ -11,6 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
+/**
+ * sincronizza DB quando l'utente è loggato (add/remove/update).
+ */
 @WebServlet("/carrello")
 public class CarrelloServlet extends HttpServlet {
 
@@ -47,8 +50,8 @@ public class CarrelloServlet extends HttpServlet {
 
         String action = request.getParameter("action");
         ProdottoDAO dao = new ProdottoDAO();
-        Utente utente = (Utente) session.getAttribute("utente");    
-        CarrelloDAO carDao = (utente != null) ? new CarrelloDAO() : null; 
+        Utente utente = (Utente) session.getAttribute("utente");    // controlla login
+        CarrelloDAO carDao = (utente != null) ? new CarrelloDAO() : null; // usa DAO solo se loggato
 
         if ("add".equals(action)) {
             try {
@@ -97,7 +100,7 @@ public class CarrelloServlet extends HttpServlet {
             try {
                 int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
                 int quantita = Integer.parseInt(request.getParameter("quantita"));
-                quantita = Math.max(1, quantita);                // MOD: clamp
+                quantita = Math.max(1, quantita);                // clamp
                 carrello.aggiornaQuantita(idProdotto, quantita);
                 // persisto quantità esatta se loggato
                 if (utente != null) carDao.aggiornaQuantita(utente.getId(), idProdotto, quantita);
