@@ -36,9 +36,11 @@ CREATE TABLE prodotti (
 -- ========================================
 -- 3) UTENTI
 -- ========================================
+
 CREATE TABLE utenti (
     id_utente INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,  
     password VARCHAR(255) NOT NULL,
     ruolo ENUM('cliente', 'admin') DEFAULT 'cliente'
 ) ENGINE=InnoDB;
@@ -92,16 +94,20 @@ CREATE TABLE ordine_dettagli (
         ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- ========================================
+-- 7) CARRELLO PERSISTENTE PER UTENTE
+-- ========================================
 CREATE TABLE IF NOT EXISTS carrello_item (
     id_item INT AUTO_INCREMENT PRIMARY KEY,
     id_utente INT NOT NULL,
     id_prodotto INT NOT NULL,
     quantita INT NOT NULL DEFAULT 1,
-    UNIQUE KEY unq_utente_prodotto (id_utente, id_prodotto),
+    UNIQUE KEY unq_utente_prodotto (id_utente, id_prodotto),  -- necessario per UPSERT
     CONSTRAINT fk_car_item_user FOREIGN KEY (id_utente) REFERENCES utenti(id_utente) ON DELETE CASCADE,
-    CONSTRAINT fk_car_item_prod FOREIGN KEY (id_prodotto) REFERENCES prodotti(id_prodotto) ON DELETE CASCADE
+    CONSTRAINT fk_car_item_prod FOREIGN KEY (id_prodotto) REFERENCES prodotti(id_prodotto) ON DELETE CASCADE,
+    INDEX idx_car_utente (id_utente),     -- indice per carichi veloci del carrello
+    INDEX idx_car_prodotto (id_prodotto)  -- indice utile su join/controlli
 ) ENGINE=InnoDB;
-
 
 -- ========================================
 -- DATI DI BASE
@@ -123,7 +129,7 @@ INSERT INTO prodotti (titolo, prezzo, immagine, descrizione, id_artista) VALUES
 ('Mr Fini', 16.99, 'MrFini.jpg', 'Album famoso di Gue Pequeno', 4), 
 ('Hellvisback', 17.50, 'Hellvisback.jpg', 'Successo di Salmo', 5);
 
--- Utente admin di default
-INSERT INTO utenti (email, password, ruolo)
-VALUES (
-  'admin@rapitalianostore.it', '$2a$12$TwaIt3fcovWfqujX1yqOS.X5GGY0z7s2ptIn3W5M/J3jynwmtuVLe', 'admin');
+-- Utente admin di default (con username)
+INSERT INTO utenti (email, username, password, ruolo)  
+VALUES ('admin@rapitalianostore.it', 'admin', '$2a$12$TwaIt3fcovWfqujX1yqOS.X5GGY0z7s2ptIn3W5M/J3jynwmtuVLe', 'admin');
+

@@ -10,12 +10,12 @@
 
     <!-- Pagina di benvenuto -->
     <welcome-file-list>
-        <welcome-file>home</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
     <!-- Timeout sessione (in minuti) -->
     <session-config>
-        <session-timeout>1</session-timeout>
+        <session-timeout>20</session-timeout> 
     </session-config>
 
     <!-- Configurazione DataSource per ambiente di produzione -->
@@ -25,5 +25,53 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>
+
+    <!-- =========================
+         Filtro che garantisce la presenza di csrfToken in sessione
+         Va PRIMA degli altri filtri, così le JSP vedono sempre ${sessionScope.csrfToken}
+         ========================= -->
+    <filter>
+        <filter-name>CsrfTokenInitFilter</filter-name>
+        <filter-class>it.unisa.rapitalianostore.filters.CsrfTokenInitFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CsrfTokenInitFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Filtro: consente accesso solo agli admin sulle rotte area amministratore -->
+    <filter>
+        <filter-name>AdminAuthFilter</filter-name>
+        <filter-class>it.unisa.rapitalianostore.filters.AdminAuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AdminAuthFilter</filter-name>
+        <!-- Tutte le URL dell'area admin -->
+        <url-pattern>/admin</url-pattern>
+        <url-pattern>/prodottiAdmin</url-pattern>
+        <url-pattern>/artistiAdmin</url-pattern>
+        <url-pattern>/utentiAdmin</url-pattern>
+        <url-pattern>/ordiniAdmin</url-pattern>
+    </filter-mapping>
+
+    <!-- Filtro per richiedere login sulle rotte cliente protette (es. /checkout) -->
+    <filter>
+        <filter-name>LoginRequiredFilter</filter-name>
+        <filter-class>it.unisa.rapitalianostore.filters.LoginRequiredFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginRequiredFilter</filter-name>
+        <url-pattern>/checkout</url-pattern>
+    </filter-mapping>
+
+	<filter>
+  		<filter-name>CharacterEncodingFilter</filter-name>
+  		<filter-class>it.unisa.rapitalianostore.filters.CharacterEncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+  		<filter-name>CharacterEncodingFilter</filter-name>
+  		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 
 </web-app>

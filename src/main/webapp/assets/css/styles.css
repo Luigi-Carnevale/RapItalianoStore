@@ -648,7 +648,7 @@ body {
     background-color: #000;
     color: #fff;
     border: 1px solid #333;
-    border-radius: 5px;
+    border-radius: 2px;
     font-weight: bold;
 }
 
@@ -1118,7 +1118,7 @@ body {
 }
 
 .album-description {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     line-height: 1.6;
     color: #444;
 }
@@ -1652,3 +1652,451 @@ body.menu-open { overflow: hidden; }	/* quando è aperta la navbar impedisce lo 
 .confirm-page .btn {
     margin: 0.5rem;
 }
+
+/* =========================================================
+   MOD: Stepper quantità (carrello)
+   - Disattiva spinner nativi su number
+   - Stile coerente con palette scura e accento rosso #e63946
+   - Focus ring accessibile
+   ========================================================= */
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } /* MOD */
+.qty-input[type=number] { -moz-appearance: textfield; } /* MOD */
+
+.qty-control { /* MOD */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 999px;
+  padding: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+.qty-btn { /* MOD */
+  appearance: none;
+  border: 0;
+  background: #222;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  font-size: 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25) inset;
+}
+
+.qty-btn:hover { background: #2e2e2e; } /* MOD */
+.qty-btn:active { transform: scale(0.96); background: #3a3a3a; } /* MOD */
+
+.qty-btn:focus-visible,
+.qty-input:focus-visible { /* MOD */
+  outline: none;
+  box-shadow: 0 0 0 2px #111, 0 0 0 4px #e63946; /* anello focus con accento rosso */
+}
+
+.qty-input { /* MOD */
+  width: 60px;
+  text-align: center;
+  background: #111;
+  color: #fff;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+.qty-control.is-min .qty-btn:first-child,
+.qty-control.is-max .qty-btn:last-child { /* MOD */
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) { /* MOD */
+  .qty-btn { width: 38px; height: 38px; line-height: 38px; font-size: 20px; }
+  .qty-input { width: 56px; }
+}
+
+/* === Toast notifiche carrello (riuso globale) === */
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  padding: .9rem 1.1rem;
+  background: #ff0000; /* successo */
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 10000;
+}
+.toast.error { background:#b00020; } /* errore */
+.toast.show  { opacity: 1; transform: translateY(0); }
+
+/* === layout checkout === */
+.checkout-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-group-span2 { grid-column: span 2; }
+@media (max-width: 768px) {
+  .checkout-form .form-grid { grid-template-columns: 1fr; }
+  .form-group-span2 { grid-column: auto; }
+}
+
+/* feedback campi checkout */
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: .9rem;
+  line-height: 1.2;
+}
+.field-hint.ok  { color: #1f8f4e; }
+.field-hint.err { color: #b00020; }
+
+.error-msg { color:#d32f2f; font-size:0.9rem; margin-top:4px; display:block; }
+.input-error { border-color:#d32f2f; outline: none; box-shadow: 0 0 0 2px rgba(211,47,47,0.15); }
+.hint { font-size:0.85rem; }
+.form-grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:1rem; }
+.form-grid-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; }
+@media (max-width: 768px){ .form-grid-2,.form-grid-3{ grid-template-columns:1fr; } }
+
+/* user orders filters bar */
+.filters-bar {
+  gap: .75rem;
+  align-items: flex-end;
+  margin-bottom: .75rem;
+}
+.filters-bar .form-group label {
+  display:block;
+  margin-bottom:.25rem;
+  font-weight:600;
+}
+
+.filters-bar { gap:.75rem; align-items:flex-end; margin-bottom:.75rem; }
+.filters-bar .form-group label { display:block; margin-bottom:.25rem; font-weight:600; }
+
+/* === ORDINI: barra filtri e pulsanti che restano dentro al riquadro === */
+
+/* Contenitore filtri: imposta flex con wrapping */
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;              /* permette di andare a capo */
+  gap: .75rem;
+  align-items: flex-end;
+  margin-bottom: .75rem;
+}
+
+/* Ogni gruppo prende spazio ma non troppo: evita overflow orizzontale */
+.filters-bar .form-group {
+  flex: 1 1 180px;              /* grow | shrink | base */
+  min-width: 160px;             /* larghezza minima sensata */
+}
+
+/* Il gruppo dei pulsanti non si allarga troppo */
+.filters-bar .form-group.actions,
+.filters-bar .form-group:last-child {
+  flex: 0 0 auto;               /* grande quanto serve */
+}
+
+/* Bottoni coerenti e non spezzati */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding: .55rem .9rem;
+  line-height: 1.15;
+  white-space: nowrap;          /* niente a capo dentro il bottone */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Allineamento dei due pulsanti (Filtra/Reset) quando affiancati */
+.filters-bar .actions .btn,
+.filters-bar .form-group .btn {
+  margin: 0;
+}
+
+/* Riquadro ordine: evita che i contenuti escano */
+.order-box {
+  overflow: hidden;             /* nasconde eventuali sbordamenti visivi */
+}
+
+/* Tabella dettagli: impedisce allargamenti oltre container */
+.order-details {
+  width: 100%;
+  table-layout: fixed;          /* colonne a larghezza fissa -> meno overflow */
+  border-collapse: collapse;
+}
+
+/* Celle testuali con troncamento elegante se lunghe */
+.order-details th,
+.order-details td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  padding: .5rem .6rem;
+}
+
+/* Colonna “Prodotto” un po’ più larga */
+.order-details td.cart-product,
+.order-details th:first-child {
+  width: 45%;
+}
+
+/* Immagine miniatura sempre allineata e contenuta */
+.cart-thumb {
+  max-width: 48px;
+  max-height: 48px;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: .5rem;
+}
+
+/* === Responsive: su mobile i filtri vanno in colonna e i bottoni diventano full width === */
+@media (max-width: 768px) {
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filters-bar .form-group {
+    min-width: 100%;
+  }
+  .filters-bar .btn {
+    width: 100%;                /* bottoni larghi come il contenitore */
+  }
+  .order-details th,
+  .order-details td {
+    padding: .5rem;
+  }
+  .order-details td.cart-product {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+}
+
+/* selettore coerente con i pulsanti */
+.select-control {
+  display:inline-block;
+  padding:.5rem .75rem;
+  border:1px solid #ddd;
+  border-radius:8px;
+  background:#fff;
+  font:inherit;
+  line-height:1.2;
+  min-width:180px;
+  cursor:pointer;
+}
+.select-control:focus { outline:none; box-shadow:0 0 0 3px rgba(0,0,0,.08); }
+
+/* ====== Responsive: pagina "I miei ordini" ====== */
+
+/* layout desktop già ok: assicuriamoci che i filtri stiano in riga */
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: .75rem;
+}
+
+/* su tablet in giù: impila i campi, allarga a tutta larghezza */
+@media (max-width: 768px) {
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .75rem;
+  }
+  .filters-bar .form-group {
+    width: 100%;
+  }
+  .filters-bar .form-group input,
+  .filters-bar .form-group select {
+    width: 100%;
+  }
+  .filters-bar .actions {
+    display: flex;
+    gap: .5rem;
+  }
+  .filters-bar .actions .btn {
+    flex: 1 1 50%;
+    text-align: center;
+  }
+
+  /* box ordine più arioso su mobile */
+  .order-box {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  /* tabella dettagli: scroll orizzontale elegante, senza rompere layout */
+  .order-details {
+    display: block;            /* sblocca overflow su <table> */
+    width: 100%;
+    overflow-x: auto;          /* abilita scroll se serve */
+    -webkit-overflow-scrolling: touch;
+    border-collapse: separate; /* evita clipping border-radius nei box */
+    border-spacing: 0;
+  }
+  .order-details thead th,
+  .order-details tbody td {
+    white-space: nowrap;       /* evita wrap brutti su numeri/prezzi */
+    padding: .5rem .75rem;
+  }
+
+  /* thumbnail più piccole per righe compatte */
+  .cart-thumb {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* telefoni stretti: micro-tuning */
+@media (max-width: 420px) {
+  .filters-bar .actions .btn {
+    padding: .6rem .75rem;
+    font-size: .95rem;
+  }
+  .order-details thead th,
+  .order-details tbody td {
+    padding: .45rem .6rem;
+    font-size: .95rem;
+  }
+  .cart-thumb {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* === Fix: non troncare il nome prodotto nella pagina ordini === */
+
+/* Desktop e mobile: il blocco “prodotto” usa flex e consente il wrap del nome */
+.order-details .cart-product {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+.order-details .cart-product img.cart-thumb {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.order-details .cart-product span {
+  /* il testo del titolo può andare a capo liberamente */
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+}
+
+/* se in qualche punto è stato impostato table-layout:fixed, riportiamo ad auto */
+.order-details {
+  table-layout: auto;
+}
+
+/* --- Responsive overrides --- */
+@media (max-width: 768px) {
+  /* prima avevamo messo nowrap su tutte le celle: qui facciamo eccezione per la 1ª colonna */
+  .order-details thead th,
+  .order-details tbody td {
+    white-space: nowrap;
+  }
+  .order-details thead th:first-child,
+  .order-details tbody td:first-child {
+    white-space: normal;     /* consenti a capo solo al nome prodotto */
+    min-width: 220px;        /* un po’ più larga per non “strozzare” il testo */
+  }
+
+  /* miniatura un filo più piccola su schermi stretti */
+  .order-details .cart-product img.cart-thumb {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 420px) {
+  .order-details thead th:first-child,
+  .order-details tbody td:first-child {
+    min-width: 200px;
+  }
+}
+
+/* ========== Filtri "I miei ordini" - compattazione spazi (responsive) ========== */
+
+/* Desktop: stringiamo leggermente senza rovinare l'aria */
+.filters-bar {
+  gap: .6rem;                /* prima probabilmente 1rem+ */
+}
+.filters-bar .form-group {
+  margin-bottom: .25rem;     /* compatta la riga */
+}
+.filters-bar .btn.btn-primary,
+.filters-bar .btn.btn-secondary {
+  padding: .45rem .8rem;     /* pulsanti un filo più piccoli */
+  line-height: 1.1;
+}
+
+/* Tablet & mobile */
+@media (max-width: 768px) {
+  .filters-bar {
+    gap: .4rem;              /* meno spazio orizzontale/verticale */
+    row-gap: .35rem;         /* riduce lo spazio tra le righe quando vanno a capo */
+  }
+  .filters-bar .form-group {
+    margin: 0;               /* elimina margini extra */
+  }
+  .filters-bar label {
+    margin-bottom: .15rem;   /* label più vicina al campo */
+    font-size: .95rem;
+  }
+  .filters-bar input,
+  .filters-bar select {
+    padding: .4rem .55rem;   /* input compatti */
+  }
+  .filters-bar .btn.btn-primary,
+  .filters-bar .btn.btn-secondary {
+    padding: .4rem .7rem;    /* bottoni compatti */
+    font-size: .95rem;
+  }
+  /* se i controlli sono in .form-inline, favorisci layout a due colonne "morbide" */
+  .filters-bar.form-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* due colonne */
+    gap: .4rem .5rem;                /* riga/colonna */
+  }
+  .filters-bar .form-group:last-child {
+    grid-column: 1 / -1;     /* il blocco pulsanti su tutta la larghezza */
+    display: flex;
+    gap: .4rem;
+    justify-content: flex-start;
+  }
+}
+
+/* Mobile stretto */
+@media (max-width: 480px) {
+  .filters-bar.form-inline {
+    grid-template-columns: 1fr; /* una colonna su telefoni piccoli */
+    gap: .35rem;
+  }
+  .filters-bar .btn.btn-primary,
+  .filters-bar .btn.btn-secondary {
+    width: auto;             /* bottoni a dimensione contenuto */
+  }
+}
+
+/* usata per rispettare gli a capo */
+.preserve-lines { white-space: pre-line; }
+
