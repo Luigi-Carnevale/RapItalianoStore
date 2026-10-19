@@ -130,6 +130,8 @@ INSERT INTO prodotti (titolo, prezzo, immagine, descrizione, id_artista) VALUES
 ('Hellvisback', 17.50, 'Hellvisback.jpg', 'Successo di Salmo', 5);
 
 -- Utente admin di default (con username)
+-- ATTENZIONE: dati di PROVA per l'uso in locale. La password di questo admin è «Admin@123»:
+-- prima di mettere il sito online cambiarla (nuovo hash con tools/GenHash.java).
 INSERT INTO utenti (email, username, password, ruolo)  
 VALUES ('admin@rapitalianostore.it', 'admin', '$2a$12$TwaIt3fcovWfqujX1yqOS.X5GGY0z7s2ptIn3W5M/J3jynwmtuVLe', 'admin');
 
